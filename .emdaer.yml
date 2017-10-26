@@ -9,7 +9,7 @@
         image: 'travis/e0ipso/plugnplay.svg'
         link: 'https://travis-ci.org/e0ipso/plugnplay/'
       - alt: Coverage Status
-        image: 'coveralls/github/jekyll/jekyll/master.svg'
+        image: 'coveralls/github/e0ipso/plugnplay/master.svg'
         link: 'https://coveralls.io/github/e0ipso/plugnplay?branch=master'
       - alt: David Dependency Management
         image: 'david/e0ipso/plugnplay.svg'
