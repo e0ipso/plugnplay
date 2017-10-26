@@ -1,0 +1,30 @@
+language: node_js
+cache:
+  directories:
+    - node_modules
+notifications:
+  email: false
+node_js:
+  - '6'
+  - '8'
+env:
+  - CXX=g++-4.8
+cache:
+  directories:
+    - node_modules
+    - .tmp
+before_install:
+  - git fetch origin --tags
+before_script:
+  - npm prune
+script:
+  - npm test
+after_success:
+  # Report coverage to coveralls.io
+  - cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js
+  - rm -rf ./coverage
+  - npm run semantic-release
+
+branches:
+  except:
+    - /^v\d+\.\d+\.\d+$/
