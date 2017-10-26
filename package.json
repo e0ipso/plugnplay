@@ -1,11 +1,11 @@
 {
   "name": "plugnplay",
-  "version": "1.0.0",
+  "version": "0.0.0-development",
   "description": "Plugin system for reusable components",
   "main": "index.js",
   "repository": {
     "type": "git",
-    "url": "git+ssh://git@github.com/e0ipso/plugnplay.git"
+    "url": "https://github.com/e0ipso/plugnplay.git"
   },
   "author": {
     "name": "Mateu (e0ipso)",
