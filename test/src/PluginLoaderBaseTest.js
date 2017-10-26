@@ -21,5 +21,5 @@ module.exports = {
     test.equal(this.loader.manager.constructor.name, 'PluginManager');
     test.equal(this.loader.pluginId, 'lorem');
     test.done();
-  }
+  },
 };
