@@ -16,8 +16,6 @@ cache:
     - .tmp
 before_install:
   - git fetch origin --tags
-before_script:
-  - npm prune
 script:
   - npm test
 after_success:

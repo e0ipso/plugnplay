@@ -5,9 +5,11 @@
 // const PluginBase = require('./src/PluginBase');
 
 const PluginManager = require('./lib/PluginManager');
-const PluginBase = require('./lib/PluginBase');
+const PluginLoaderBase = require('./lib/PluginLoaderBase');
+const PluginLoaderFactory = require('./lib/PluginLoaderFactory');
 
 module.exports = {
   PluginManager,
-  PluginBase,
+  PluginLoaderBase,
+  PluginLoaderFactory,
 };

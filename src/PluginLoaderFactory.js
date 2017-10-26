@@ -28,7 +28,7 @@ class PluginLoaderFactory extends Factory {
     // the exports.
     const loaderPath: string = path.relative(
       __dirname,
-      path.resolve(descriptor._pluginPath, descriptor.loader),
+      path.resolve(descriptor._pluginPath, descriptor.loader)
     );
     try {
       return require(loaderPath); // eslint-disable-line import/no-dynamic-require,global-require
