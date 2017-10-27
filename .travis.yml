@@ -1,7 +1,4 @@
 language: node_js
-cache:
-  directories:
-    - node_modules
 notifications:
   email: false
 node_js:
@@ -13,20 +10,22 @@ cache:
   directories:
     - node_modules
     - .tmp
+    - ~/.npm
 before_install:
   - git fetch origin --tags
-  - yarn global add greenkeeper-lockfile@1
+  - npm install --global npm@5
+  - npm install --global greenkeeper-lockfile@1
 before_script:
   - greenkeeper-lockfile-update
 script:
-  - yarn test
+  - npm test
 after_script:
   - greenkeeper-lockfile-upload
 after_success:
   # Report coverage to coveralls.io
   - cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js
   - rm -rf ./coverage
-  - yarn run semantic-release
+  - npm run semantic-release
 
 branches:
   except:

@@ -23,7 +23,7 @@
   },
   "homepage": "https://github.com/e0ipso/plugnplay#readme",
   "scripts": {
-    "coverage": "istanbul check-coverage --statements 1 --lines 1 --branches 1 --functions 1 **/coverage.json",
+    "coverage": "istanbul check-coverage --statements 0 --lines 0 --branches 0 --functions 0 **/coverage.json",
     "test": "npm run build && istanbul cover --print both nodeunit ./test",
     "commitmsg": "validate-commit-msg",
     "precommit": "npm run flow && npm run lint",
