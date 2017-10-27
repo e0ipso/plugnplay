@@ -23,17 +23,17 @@
   },
   "homepage": "https://github.com/e0ipso/plugnplay#readme",
   "scripts": {
-    "coverage": "./node_modules/.bin/istanbul check-coverage --statements 1 --lines 1 --branches 1 --functions 1 **/coverage.json",
-    "test": "npm run build && ./node_modules/.bin/istanbul cover --print both nodeunit ./test",
-    "commitmsg": "./node_modules/.bin/validate-commit-msg",
+    "coverage": "istanbul check-coverage --statements 1 --lines 1 --branches 1 --functions 1 **/coverage.json",
+    "test": "npm run build && istanbul cover --print both nodeunit ./test",
+    "commitmsg": "validate-commit-msg",
     "precommit": "npm run flow && npm run lint",
     "prepush": "npm test && npm run coverage",
-    "semantic-release": "./node_modules/.bin/semantic-release pre && npm publish && ./node_modules/.bin/semantic-release post",
+    "semantic-release": "semantic-release pre && npm publish && semantic-release post",
     "postinstall": "npm run build",
-    "flow": "./node_modules/.bin/flow",
-    "build": "./node_modules/.bin/flow-remove-types src/ --out-dir lib/ && flow-copy-source src lib",
-    "lint": "./node_modules/.bin/eslint src",
-    "emdaer": "./node_modules/.bin/emdaer"
+    "flow": "flow",
+    "build": "flow-remove-types src/ --out-dir lib/ && flow-copy-source src lib",
+    "lint": "eslint src",
+    "emdaer": "emdaer"
   },
   "keywords": [
     "plugin",
