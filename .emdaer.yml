@@ -11,21 +11,15 @@
       - alt: Coverage Status
         image: 'coveralls/github/e0ipso/plugnplay/master.svg'
         link: 'https://coveralls.io/github/e0ipso/plugnplay?branch=master'
+      - alt: Last Commit
+        image: 'github/last-commit/e0ipso/plugnplay.svg'
+        link: 'https://github.com/e0ipso/plugnplay'
       - alt: David Dependency Management
         image: 'david/e0ipso/plugnplay.svg'
         link: 'https://david-dm.org/e0ipso/plugnplay'
-      - alt: David Dependency Management (dev)
-        image: 'david/dev/e0ipso/plugnplay.svg'
-        link: 'https://david-dm.org/dev/e0ipso/plugnplay#info=devDependencies&view=table'
       - alt: 'Node'
         image: 'node/v/plugnplay.svg'
         link: 'http://npmjs.com/package/plugnplay'
-      - alt: 'NPM'
-        image: 'npm/v/plugnplay.svg'
-        link: 'http://npmjs.com/package/plugnplay'
-      - alt: 'Greenkeeper'
-        image: 'badge/Greenkeeper-enabled-brightgreen.svg'
-        link: 'https://greenkeeper.io/'
 - include: './docs/summary.md'
 - include: './docs/quick.md'
 - include: './docs/plugins.md'
