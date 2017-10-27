@@ -53,7 +53,7 @@ export interface PluginManagerInterface {
    *   TRUE if the descriptor was registered. FALSE if the descriptor was
    *   already registered.
    */
-  register(descriptor: PluginDescriptor): boolean;
+  register(descriptor: Object): boolean;
 
   /**
    * Gets the descriptor by an ID.

@@ -1,0 +1,3 @@
+id: invalid_loader
+name: Invalid Loader
+loader: loader.js

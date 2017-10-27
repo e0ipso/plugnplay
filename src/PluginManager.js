@@ -94,19 +94,14 @@ class PluginManager implements PluginManagerInterface {
           try {
             doc = yaml.safeLoad(data.content);
             // Add defaults.
-            doc = Object.assign({}, {
-              id: '',
-              exports: '',
-              dependencies: [],
-              _pluginPath: dirname(data.filePath),
-            }, doc);
+            doc = this._addDefaults(doc, dirname(data.filePath));
           }
           catch (e) {
             return null;
           }
           // Exclude docs without the required keys.
           // TODO: Write a schema for the `plugnplay.yml` and validate the schema instead of manual testing.
-          return _.has(doc, 'id') && _.has(doc, 'exports') ? doc : null;
+          return _.has(doc, 'id') && _.has(doc, 'loader') ? doc : null;
         });
         return docs.filter(_.identity);
       })
@@ -120,6 +115,27 @@ class PluginManager implements PluginManagerInterface {
         this.discovered = true;
         return descriptors;
       });
+  }
+
+  /**
+   * Adds the missing defaults to the plugin descriptor.
+   *
+   * @param {Object} doc
+   *   The plugin descriptor without defaults.
+   * @param {string} pluginPath
+   *   The plugin path.
+   *
+   * @return {PluginDescriptor}
+   *   The descriptor.
+   *
+   * @private
+   */
+  _addDefaults(doc: Object, pluginPath: string): PluginDescriptor {
+    return Object.assign({}, {
+      id: '',
+      dependencies: [],
+      _pluginPath: pluginPath,
+    }, doc);
   }
 
   /**
@@ -153,11 +169,14 @@ class PluginManager implements PluginManagerInterface {
   /**
    * @inheritDoc
    */
-  register(descriptor: PluginDescriptor): boolean {
+  register(descriptor: Object): boolean {
     if (this.registeredDescriptors.find(({ id }) => id === descriptor.id)) {
       return false;
     }
-    this.registeredDescriptors.push(descriptor);
+    if (typeof descriptor._pluginPath === 'undefined') {
+      return false;
+    }
+    this.registeredDescriptors.push(this._addDefaults(descriptor, descriptor._pluginPath));
     return true;
   }
 

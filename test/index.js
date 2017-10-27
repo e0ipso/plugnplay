@@ -1,5 +1,6 @@
 const PluginLoaderBaseTest = require('./src/PluginLoaderBaseTest');
 const PluginLoaderFactoryTest = require('./src/PluginLoaderFactoryTest');
+const PluginManagerTest = require('./src/PluginManagerTest');
 const sinon = require('sinon');
 
 module.exports = {
@@ -27,4 +28,5 @@ module.exports = {
   },
   PluginLoaderBaseTest,
   PluginLoaderFactoryTest,
+  PluginManagerTest,
 };
