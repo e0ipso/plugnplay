@@ -1,5 +1,7 @@
 # plugnplay
 
+[![Greenkeeper badge](https://badges.greenkeeper.io/e0ipso/plugnplay.svg)](https://greenkeeper.io/)
+
 [![Mateu Aguiló Bosch (e0ipso)](https://img.shields.io/badge/♥-e0ipso-green.svg?style=flat-square)](https://mateuaguilo.com/)
 [![Travis](https://img.shields.io/travis/e0ipso/plugnplay.svg?style=flat-square)](https://travis-ci.org/e0ipso/plugnplay/)
 [![Coverage Status](https://img.shields.io/coveralls/github/jekyll/jekyll/master.svg?style=flat-square)](https://coveralls.io/github/e0ipso/plugnplay?branch=master)
