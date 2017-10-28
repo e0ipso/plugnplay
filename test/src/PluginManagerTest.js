@@ -19,12 +19,20 @@ module.exports = {
         const expected = [
           {
             id: 'avocado',
-            dependencies: ['mango'],
+            dependencies: ['mango', 'fruit'],
             _pluginPath: './test/test_plugins/avocado',
             name: 'Avocado',
             description: 'The main ingredient for guacamole.',
             loader: 'loader.js',
-            type: 'mango',
+            type: 'fruit',
+          },
+          {
+            id: 'fruit',
+            dependencies: [],
+            _pluginPath: './test/test_plugins/fruit',
+            name: 'Fruit',
+            description: 'A type of delicious food.',
+            loader: 'loader.js',
           },
           {
             id: 'invalid_loader',
@@ -40,6 +48,15 @@ module.exports = {
             name: 'Mango',
             description: 'It\'s an orange sweet oval.',
             loader: 'loader.js',
+          },
+          {
+            id: 'pear',
+            dependencies: ['fruit'],
+            _pluginPath: './test/test_plugins/pear',
+            name: 'Pear',
+            description: 'A kind of fruit',
+            loader: 'loader.js',
+            type: 'fruit',
           },
         ];
         test.deepEqual(descriptors, expected);
@@ -109,15 +126,16 @@ module.exports = {
       .then((fruits) => {
         test.deepEqual(fruits[0], {
           exports: { sugarLevel: 'low', color: '#33AA33', size: 'medium' },
-          descriptor: {
-            id: 'avocado',
-            dependencies: ['mango'],
-            _pluginPath: './test/test_plugins/avocado',
-            name: 'Avocado',
-            description: 'The main ingredient for guacamole.',
-            loader: 'loader.js',
-            type: 'mango',
-          },
+          descriptor:
+            {
+              id: 'avocado',
+              dependencies: ['mango', 'fruit'],
+              _pluginPath: './test/test_plugins/avocado',
+              name: 'Avocado',
+              description: 'The main ingredient for guacamole.',
+              loader: 'loader.js',
+              type: 'fruit',
+            },
         });
         test.equal(fruits[1].exports.color, 'green');
         test.done();
@@ -139,7 +157,7 @@ module.exports = {
       .catch((error) => {
         test.equal(
           error.message,
-          'Unable to find plugin with ID: "fail". Available plugins are: avocado, invalid_loader, mango'
+          'Unable to find plugin with ID: "fail". Available plugins are: avocado, fruit, invalid_loader, mango, pear'
         );
         test.done();
       });
@@ -150,7 +168,7 @@ module.exports = {
       .catch((error) => {
         test.equal(
           error.message,
-          'Unable to find or execute the plugin loader for plugin "invalid_loader".'
+          'Unable to find or execute the plugin loader for plugin "invalid_loader" (found InvalidLoader).'
         );
         test.done();
       });

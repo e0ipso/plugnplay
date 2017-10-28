@@ -1,0 +1,5 @@
+id: pear
+name: Pear
+description: A kind of fruit
+loader: loader.js
+type: fruit

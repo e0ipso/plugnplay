@@ -4,6 +4,12 @@ import type { PluginTypeLoaderInterface } from '../types/common';
 
 const PluginLoaderBase = require('./PluginLoaderBase');
 
+/**
+ * @classdesc
+ *   Loader for plugins representing types.
+ * @class
+ *   PluginTypeLoaderBase
+ */
 class PluginTypeLoaderBase extends PluginLoaderBase implements PluginTypeLoaderInterface {
   /**
    * @inheritDoc

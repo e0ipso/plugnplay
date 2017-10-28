@@ -1,0 +1,4 @@
+id: fruit
+name: Fruit
+description: A type of delicious food.
+loader: loader.js

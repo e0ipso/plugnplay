@@ -157,11 +157,11 @@ class PluginManager implements PluginManagerInterface {
           throw new Error(msg);
         }
         const loader = PluginLoaderFactory.create(descriptor, this, pluginId);
-        if (loader instanceof PluginLoaderBase) {
+        if (typeof loader.export === 'function' && loader.constructor.prototype) {
           // Get the object with the actual functionality.
           return { exports: loader.export(options), descriptor };
         }
-        throw new Error(`Unable to find or execute the plugin loader for plugin "${pluginId}".`);
+        throw new Error(`Unable to find or execute the plugin loader for plugin "${pluginId}" (found ${loader.constructor.name}).`);
       })
       .then((instance) => {
         if (!(instance.exports instanceof Object)) {
