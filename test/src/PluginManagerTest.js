@@ -19,10 +19,19 @@ module.exports = {
         const expected = [
           {
             id: 'avocado',
-            dependencies: ['mango'],
+            dependencies: ['mango', 'fruit'],
             _pluginPath: './test/test_plugins/avocado',
             name: 'Avocado',
             description: 'The main ingredient for guacamole.',
+            loader: 'loader.js',
+            type: 'fruit',
+          },
+          {
+            id: 'fruit',
+            dependencies: [],
+            _pluginPath: './test/test_plugins/fruit',
+            name: 'Fruit',
+            description: 'A type of delicious food.',
             loader: 'loader.js',
           },
           {
@@ -39,6 +48,15 @@ module.exports = {
             name: 'Mango',
             description: 'It\'s an orange sweet oval.',
             loader: 'loader.js',
+          },
+          {
+            id: 'pear',
+            dependencies: ['fruit'],
+            _pluginPath: './test/test_plugins/pear',
+            name: 'Pear',
+            description: 'A kind of fruit',
+            loader: 'loader.js',
+            type: 'fruit',
           },
         ];
         test.deepEqual(descriptors, expected);
@@ -107,11 +125,19 @@ module.exports = {
     ])
       .then((fruits) => {
         test.deepEqual(fruits[0], {
-          sugarLevel: 'low',
-          color: '#33AA33',
-          size: 'medium',
+          exports: { sugarLevel: 'low', color: '#33AA33', size: 'medium' },
+          descriptor:
+            {
+              id: 'avocado',
+              dependencies: ['mango', 'fruit'],
+              _pluginPath: './test/test_plugins/avocado',
+              name: 'Avocado',
+              description: 'The main ingredient for guacamole.',
+              loader: 'loader.js',
+              type: 'fruit',
+            },
         });
-        test.equal(fruits[1].color, 'green');
+        test.equal(fruits[1].exports.color, 'green');
         test.done();
       });
   },
@@ -119,6 +145,7 @@ module.exports = {
     test.expect(1);
     const manager = new PluginManager({ discovery: { rootPath: './test' } });
     manager.instantiate('mango')
+      .then(() => test.done())
       .catch((error) => {
         test.equal(error.message, 'The plugin "mango" did not return an object after loading.');
         test.done();
@@ -130,7 +157,7 @@ module.exports = {
       .catch((error) => {
         test.equal(
           error.message,
-          'Unable to find plugin with ID: "fail". Available plugins are: avocado, invalid_loader, mango'
+          'Unable to find plugin with ID: "fail". Available plugins are: avocado, fruit, invalid_loader, mango, pear'
         );
         test.done();
       });
@@ -141,7 +168,7 @@ module.exports = {
       .catch((error) => {
         test.equal(
           error.message,
-          'Unable to find or execute the plugin loader for plugin "invalid_loader".'
+          'Unable to find or execute the plugin loader for plugin "invalid_loader" (found InvalidLoader).'
         );
         test.done();
       });
@@ -168,9 +195,21 @@ module.exports = {
       id: 'missing_deps',
       loader: 'loader.js',
       _pluginPath: 'foo',
-      dependencies: ['fail']
+      dependencies: ['fail'],
     });
     test.throws(() => this.manager.check('missing_deps'), 'Error');
     test.done();
   },
+  all(test) {
+    test.expect(1);
+    const descriptor = {
+      id: 'lorem',
+      dependencies: [],
+      loader: 'loader.js',
+      _pluginPath: 'foo',
+    };
+    this.manager.register(descriptor);
+    test.deepEqual(this.manager.all(), [descriptor]);
+    test.done();
+  }
 };

@@ -4,6 +4,7 @@ import type {
   PluginManagerConfig,
   PluginManagerInterface,
   PluginDescriptor,
+  PluginInstance,
 } from '../types/common';
 
 const { dirname } = require('path');
@@ -12,7 +13,6 @@ const fs = require('fs');
 const _ = require('lodash');
 const pify = require('pify');
 const yaml = require('js-yaml');
-const PluginLoaderBase = require('./PluginLoaderBase');
 const PluginLoaderFactory = require('./PluginLoaderFactory');
 
 const readFile = pify(fs.readFile);
@@ -100,7 +100,6 @@ class PluginManager implements PluginManagerInterface {
             return null;
           }
           // Exclude docs without the required keys.
-          // TODO: Write a schema for the `plugnplay.yml` and validate the schema instead of manual testing.
           return _.has(doc, 'id') && _.has(doc, 'loader') ? doc : null;
         });
         return docs.filter(_.identity);
@@ -131,17 +130,22 @@ class PluginManager implements PluginManagerInterface {
    * @private
    */
   _addDefaults(doc: Object, pluginPath: string): PluginDescriptor {
-    return Object.assign({}, {
+    const output = Object.assign({}, {
       id: '',
       dependencies: [],
       _pluginPath: pluginPath,
     }, doc);
+    if (typeof doc.type !== 'undefined') {
+      output.dependencies.push(doc.type);
+    }
+    output.dependencies = _.uniq(output.dependencies);
+    return output;
   }
 
   /**
    * @inheritDoc
    */
-  instantiate(pluginId: string, options: Object = {}): Promise<Object> {
+  instantiate(pluginId: string, options: Object = {}): Promise<PluginInstance> {
     return this.discover()
       .then((descriptors) => {
         const descriptor = descriptors
@@ -152,17 +156,17 @@ class PluginManager implements PluginManagerInterface {
           throw new Error(msg);
         }
         const loader = PluginLoaderFactory.create(descriptor, this, pluginId);
-        if (loader instanceof PluginLoaderBase) {
+        if (typeof loader.export === 'function' && loader.constructor.prototype) {
           // Get the object with the actual functionality.
-          return loader.export(options);
+          return { exports: loader.export(options), descriptor };
         }
-        throw new Error(`Unable to find or execute the plugin loader for plugin "${pluginId}".`);
+        throw new Error(`Unable to find or execute the plugin loader for plugin "${pluginId}" (found ${loader.constructor.name}).`);
       })
-      .then((exported) => {
-        if (!(exported instanceof Object)) {
+      .then((instance) => {
+        if (!(instance.exports instanceof Object)) {
           throw new Error(`The plugin "${pluginId}" did not return an object after loading.`);
         }
-        return exported;
+        return instance;
       });
   }
 
@@ -203,6 +207,13 @@ class PluginManager implements PluginManagerInterface {
         throw new Error(`Check failed. Missing dependency "${depId}" for plugin "${pluginId}".`);
       }
     });
+  }
+
+  /**
+   * @inheritDoc
+   */
+  all(): Array<PluginDescriptor> {
+    return this.registeredDescriptors;
   }
 }
 

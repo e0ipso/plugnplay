@@ -16,7 +16,13 @@ export type PluginDescriptor = {
   loader: string,
   dependencies: Array<string>,
   _pluginPath: string,
+  type?: string,
 };
+
+export type PluginInstance = {
+  descriptor: PluginDescriptor,
+  exports: Object,
+}
 
 export interface PluginManagerInterface {
   /**
@@ -76,6 +82,13 @@ export interface PluginManagerInterface {
    *   When one of the dependencies is missing.
    */
   check(pluginId: string): void;
+
+  /**
+   * Returns all the the registered plugin descriptors.
+   *
+   * @return {PluginDescriptor[]}
+   */
+  all(): Array<PluginDescriptor>;
 }
 
 export interface PluginLoaderInterface {
@@ -89,4 +102,22 @@ export interface PluginLoaderInterface {
    *   An object with the functionality.
    */
   export(options: Object): Object;
+}
+
+export interface PluginTypeLoaderInterface extends PluginLoaderInterface {
+  /**
+   * Returns the properties a plugin of this type exports.
+   *
+   * @return {string[]}
+   *   The names of the properties exported.
+   */
+  definePluginProperties(): Array<string>;
+
+  /**
+   * Finds all the plugin IDs of the type.
+   *
+   * @return {PluginDescriptor[]}
+   *   The Plugin IDs of the type.
+   */
+  findPlugins(): Array<PluginDescriptor>;
 }

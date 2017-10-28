@@ -2,7 +2,7 @@ module.exports = class InvalidLoader {
   /**
    * @inheritDoc
    */
-  export(options) {
+  fail(options) {
     return 'FAILS!';
   }
 };
