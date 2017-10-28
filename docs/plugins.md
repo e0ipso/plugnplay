@@ -43,3 +43,46 @@ module.exports = class FirstPluginLoader extends PluginLoaderBase {
 
 This loader will export the `console.log` function as the `logger` property in the exported
 functionality.
+
+### Typed Plugins
+A common use case is to have plugins that all conform to the same shape. For that we can use typed
+plugins. A typed plugin is a plugin that has the `type` key populated. The `type` contains the id
+of another plugin, this other plugin is the _type plugin_. Type plugins are regular plugins with the
+only requirement that their loader extends from `PluginTypeLoaderBase`.
+
+Look at the example plugins in the `test` folder: [fruit](/test/test_plugins/fruit) is the type for
+[pear](/test/test_plugins/pear) (the typed plugin).
+
+#### Fruit
+##### plugnplay.yml
+```yaml
+id: fruit
+name: Fruit
+description: A type of delicious food.
+loader: loader.js
+```
+
+```js
+const { PluginTypeLoaderBase } = require('plugnplay');
+
+module.exports = class FruitLoader extends PluginTypeLoaderBase {
+  /**
+   * @inheritDoc
+   */
+  definePluginProperties() {
+    // This defines the names of the properties that plugins of this type will expose. If a plugin
+    // of this type doesn't expose any of these, an error is generated.
+    return ['isBerry', 'isGood', 'size'];
+  }
+};
+```
+
+#### Pear
+```yaml
+id: pear
+name: Pear
+description: A kind of fruit
+loader: loader.js
+# The ID of the Fruit plugin.
+type: fruit
+```

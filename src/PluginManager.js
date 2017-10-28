@@ -13,7 +13,6 @@ const fs = require('fs');
 const _ = require('lodash');
 const pify = require('pify');
 const yaml = require('js-yaml');
-const PluginLoaderBase = require('./PluginLoaderBase');
 const PluginLoaderFactory = require('./PluginLoaderFactory');
 
 const readFile = pify(fs.readFile);

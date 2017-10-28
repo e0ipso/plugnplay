@@ -22,6 +22,7 @@
         link: 'http://npmjs.com/package/plugnplay'
 - include: './docs/summary.md'
 - include: './docs/quick.md'
+- include: './docs/faq.md'
 - include: './docs/plugins.md'
 - include: './docs/options.md'
 - contributors: true
