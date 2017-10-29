@@ -34,9 +34,9 @@ module.exports = class FirstPluginLoader extends PluginLoaderBase {
    * @inheritDoc
    */
   export() {
-    return {
+    return Promise.resolve({
       logger: console.log,
-    }
+    });
   }
 };
 ```

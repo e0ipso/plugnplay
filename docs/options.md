@@ -1,4 +1,5 @@
 ## Options
+### PluginManager
 ```flow js
 type PluginManagerConfig = {
   discovery: {
@@ -7,7 +8,6 @@ type PluginManagerConfig = {
   },
 };
 ```
-### PluginManager
 #### `discovery`
   - `rootPath` _string_ (`'.'`): The root path where to find all plugins. Use this setting to restrict where
   the plugin manager searches for plugins, this improves discovery performance.
