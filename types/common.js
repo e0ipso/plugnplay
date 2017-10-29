@@ -98,10 +98,10 @@ export interface PluginLoaderInterface {
    * @param {Object} options
    *   Run-time options to configure your exports.
    *
-   * @return {Object}
+   * @return {Promise.<Object>}
    *   An object with the functionality.
    */
-  export(options: Object): Object;
+  export(options: Object): Promise<Object>;
 }
 
 export interface PluginTypeLoaderInterface extends PluginLoaderInterface {

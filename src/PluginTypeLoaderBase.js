@@ -2,6 +2,7 @@
 
 import type { PluginTypeLoaderInterface } from '../types/common';
 
+const _ = require('lodash');
 const PluginLoaderBase = require('./PluginLoaderBase');
 
 /**
@@ -14,11 +15,21 @@ class PluginTypeLoaderBase extends PluginLoaderBase implements PluginTypeLoaderI
   /**
    * @inheritDoc
    */
-  export(options: Object): Object {
-    return {
+  export(options: Object): Promise<Object> {
+    return Promise.resolve({
       props: this.definePluginProperties(),
       plugins: this.findPlugins(),
-    };
+      // Validates the exports of a plugin based on the properties defined in
+      // the type.
+      validate: (exports: Object) => {
+        const actualProperties = Object.keys(exports);
+        const definedProperties = this.definePluginProperties();
+        const difference = _.difference(definedProperties, actualProperties);
+        if (difference.length !== 0) {
+          throw Error(`The plugin of type ${this.descriptor.id} is missing properties: ${difference.join(', ')}.`);
+        }
+      },
+    });
   }
 
   /**
@@ -32,7 +43,7 @@ class PluginTypeLoaderBase extends PluginLoaderBase implements PluginTypeLoaderI
    * @inheritDoc
    */
   findPlugins() {
-    return this.manager.all().filter(({ type }) => type === this.pluginId);
+    return this.manager.all().filter(({ type }) => type === this.descriptor.id);
   }
 }
 

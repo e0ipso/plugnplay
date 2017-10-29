@@ -211,5 +211,5 @@ module.exports = {
     this.manager.register(descriptor);
     test.deepEqual(this.manager.all(), [descriptor]);
     test.done();
-  }
+  },
 };

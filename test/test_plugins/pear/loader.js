@@ -5,10 +5,10 @@ module.exports = class PearLoader extends PluginLoaderBase {
    * @inheritDoc
    */
   export(options) {
-    return {
+    return Promise.resolve({
       isBerry: false,
       isGood: true,
       size: 'medium',
-    };
+    });
   }
 };

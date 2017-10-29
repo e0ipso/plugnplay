@@ -28,6 +28,7 @@ class PluginManager implements PluginManagerInterface {
   config: PluginManagerConfig;
   registeredDescriptors: Array<PluginDescriptor>;
   discovered: boolean;
+  instances: Map<string, PluginInstance>;
 
   /**
    * Creates a new plugin manager object.
@@ -45,6 +46,7 @@ class PluginManager implements PluginManagerInterface {
     this.config = _.merge(defaults, config);
     this.registeredDescriptors = [];
     this.discovered = false;
+    this.instances = new Map();
   }
 
   /**
@@ -146,6 +148,10 @@ class PluginManager implements PluginManagerInterface {
    * @inheritDoc
    */
   instantiate(pluginId: string, options: Object = {}): Promise<PluginInstance> {
+    const inst = this.instances.get(pluginId);
+    if (inst) {
+      return Promise.resolve(inst);
+    }
     return this.discover()
       .then((descriptors) => {
         const descriptor = descriptors
@@ -156,9 +162,14 @@ class PluginManager implements PluginManagerInterface {
           throw new Error(msg);
         }
         const loader = PluginLoaderFactory.create(descriptor, this, pluginId);
-        if (typeof loader.export === 'function' && loader.constructor.prototype) {
+        if (
+          typeof loader._doExport === 'function' &&
+          typeof loader.export === 'function' &&
+          loader.constructor.prototype
+        ) {
           // Get the object with the actual functionality.
-          return { exports: loader.export(options), descriptor };
+          return loader._doExport(options)
+            .then(exports => ({ exports, descriptor }));
         }
         throw new Error(`Unable to find or execute the plugin loader for plugin "${pluginId}" (found ${loader.constructor.name}).`);
       })
@@ -166,6 +177,7 @@ class PluginManager implements PluginManagerInterface {
         if (!(instance.exports instanceof Object)) {
           throw new Error(`The plugin "${pluginId}" did not return an object after loading.`);
         }
+        this.instances.set(instance.descriptor.id, instance);
         return instance;
       });
   }
