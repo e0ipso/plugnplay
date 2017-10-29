@@ -1,7 +1,7 @@
 {
   "name": "plugnplay",
   "version": "0.0.0-development",
-  "description": "Plugin system for reusable components",
+  "description": "Plugin system for reusable code in node.js",
   "main": "index.js",
   "repository": {
     "type": "git",
