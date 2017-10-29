@@ -10,7 +10,7 @@
 ## Summary
 _Plug'n'Play_ is a simple plugin system that will allow you leverage polymorphism.
 
-**Example:** Imagine a service that needs to process some data and store it in S3. The piece that stores the data
+**Example 1:** Imagine a service that needs to process some data and store it in S3. The piece that stores the data
 could be a plugin, and you could have a plugin that writes to S3, another that writes to the local
 filesystem and another that dumps the data in the console. This way you could use configuration
 files to say:
@@ -18,12 +18,19 @@ files to say:
 > OK, run the application locally but don't upload to S3 save to my disk so I can debug
 and inspect the end result.
 
-You would only need to change `storePlugin` from `'s3'` to `'disk'`.    
+You would only need to change `storePlugin` from `'s3'` to `'disk'`.
 
-### Setup
-Install the module as usual with either:
-  * Yarn: `yarn add plugnplay`
-  * NPM: `npm install --save plugnplay`
+**Example 2:** Your application deals with user objects, but a user can be initialized from their
+public GitHub data, AboutMe, etc. You can declare a plugin type 'user' and then have plugins for
+'user-from-github', 'user-from-aboutme', etc.
+[More on this example](https://github.com/e0ipso/plugnplay#why-does-export-return-a-promise).
+
+**Example 3:** In a data pipeline application you want to apply an unknown number of transformations
+to your data. Similar to a middleware you want to chain _data processors_. A data processor exposes
+a function that applies to your specific data and provides a specific output. Each data processor
+will be a plugin instance. For instance you may want to chain 'validate-against-schema',
+'remove-mb-characters', 'log-to-splunk'. Data processors can be defined in your application or can
+be discovered in 3rd party modules.
 
 ## Usage
 Imagine that you want to use a different logger for your local environment than from the production
@@ -46,7 +53,7 @@ manager.instantiate(config.get('loggerPlugin'), config.get('loggerOptions'))
 ```
 
 ## FAQ
-##### Why not just node modules that you include with a `require`?
+### Why not just node modules that you include with a `require`?
 Plugins offer several features that you can't easily obtain with `require('./some/code')`:
   * 3rd party modules can provide plugins that your app can discover for feature enhancements.
   * Typed plugins ensure expectations on what is returned.
@@ -54,11 +61,11 @@ Plugins offer several features that you can't easily obtain with `require('./som
   * Plugins can return a promise. This allows you to do _async requires_.
   * Plugins are auto-discovered and instantiated by ID. Requiring a plugin does not depend on the
   directory you are in.
-##### Can external modules provide plugins?
+### Can external modules provide plugins?
 They can! Just by declaring the plugin, anyone can find that module in the filesystem. If your
 application needs plugins provided by 3rd party modules, make sure to enable the `allowsContributed`
 option.
-##### What's the impact on performance of the plugin auto discovery?
+### What's the impact on performance of the plugin auto discovery?
 If you include plugins from 3rd party modules and your `node_modules` directory is very big, then it
 may take a while to scan all the files. If that's your case reduce the scope of the scan with the
 `rootPath` option.
@@ -77,7 +84,7 @@ const manager = new PluginManager({
 
 See more path options in the [Glob](https://github.com/isaacs/node-glob#readme) project.
 
-##### Why does `export()` return a `Promise`?
+### Why does `export()` return a `Promise`?
 The recommendation is that your plugin instance is fully loaded and ready to be used. That's why it
 can accept configuration options. That is also the reason why `export()` returns a promise, so it
 can execute async operations to fully load the exported data.
