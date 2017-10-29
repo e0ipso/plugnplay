@@ -7,6 +7,8 @@ import type {
   PluginInstance,
 } from '../types/common';
 
+const _ = require('lodash');
+
 /**
  * @classdesc
  *   A base class to detect properly loaded plugins.
@@ -65,7 +67,7 @@ class PluginLoaderBase implements PluginLoaderInterface {
           .then((pluginType) => {
             // Validate the exports.
             pluginType.exports.validate(exports);
-            return exports;
+            return _.pick(exports, pluginType.exports.props);
           });
       });
   }

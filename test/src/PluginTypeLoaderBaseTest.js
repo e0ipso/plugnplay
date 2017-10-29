@@ -73,4 +73,10 @@ module.exports = {
         test.done();
       });
   },
+  _typePluginProperties(test) {
+    test.expect(1);
+    const loader = new PluginTypeLoaderBase(this.manager, 'lorem');
+    test.deepEqual(loader._typePluginProperties(), ['props', 'plugins', 'validate']);
+    test.done();
+  },
 };

@@ -45,6 +45,20 @@ class PluginTypeLoaderBase extends PluginLoaderBase implements PluginTypeLoaderI
   findPlugins() {
     return this.manager.all().filter(({ type }) => type === this.descriptor.id);
   }
+
+  /**
+   * Helper function to get the properties of a type plugin.
+   *
+   * This is useful if the plugins of a given type are plugins types in turn.
+   *
+   * @returns {string[]}
+   *   The list of properties in a type plugin.
+   *
+   * @private
+   */
+  _typePluginProperties() {
+    return ['props', 'plugins', 'validate'];
+  }
 }
 
 module.exports = PluginTypeLoaderBase;

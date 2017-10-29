@@ -9,6 +9,7 @@ module.exports = class AvocadoLoader extends PluginLoaderBase {
       sugarLevel: 'low',
       color: options.colorType === 'hex' ? '#33AA33' : 'green',
       size: 'medium',
+      ignored: 'Look at me!',
     });
   }
 };
