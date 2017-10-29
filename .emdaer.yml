@@ -4,7 +4,7 @@
     shields:
       - alt: 'Mateu Aguiló Bosch (e0ipso)'
         image: 'badge/♥-e0ipso-green.svg'
-        link: 'https://mateuaguilo.com/'
+        link: 'http://mateuaguilo.com/'
       - alt: 'Travis'
         image: 'travis/e0ipso/plugnplay.svg'
         link: 'https://travis-ci.org/e0ipso/plugnplay/'

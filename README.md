@@ -1,6 +1,6 @@
 # plugnplay
 
-[![Mateu Aguiló Bosch (e0ipso)](https://img.shields.io/badge/♥-e0ipso-green.svg?style=flat-square)](https://mateuaguilo.com/)
+[![Mateu Aguiló Bosch (e0ipso)](https://img.shields.io/badge/♥-e0ipso-green.svg?style=flat-square)](http://mateuaguilo.com/)
 [![Travis](https://img.shields.io/travis/e0ipso/plugnplay.svg?style=flat-square)](https://travis-ci.org/e0ipso/plugnplay/)
 [![Coverage Status](https://img.shields.io/coveralls/github/e0ipso/plugnplay/master.svg?style=flat-square)](https://coveralls.io/github/e0ipso/plugnplay?branch=master)
 [![Last Commit](https://img.shields.io/github/last-commit/e0ipso/plugnplay.svg?style=flat-square)](https://github.com/e0ipso/plugnplay)
