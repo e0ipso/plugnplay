@@ -5,6 +5,6 @@ module.exports = class MangoLoader extends PluginLoaderBase {
    * @inheritDoc
    */
   export(options) {
-    return 'FAILS!';
+    return Promise.resolve('FAILS!');
   }
 };

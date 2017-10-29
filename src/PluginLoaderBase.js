@@ -3,7 +3,11 @@
 import type {
   PluginManagerInterface,
   PluginLoaderInterface,
+  PluginDescriptor,
+  PluginInstance,
 } from '../types/common';
+
+const _ = require('lodash');
 
 /**
  * @classdesc
@@ -13,7 +17,8 @@ import type {
  */
 class PluginLoaderBase implements PluginLoaderInterface {
   manager: PluginManagerInterface;
-  pluginId: string;
+  descriptor: PluginDescriptor;
+  pluginType: ?PluginInstance;
 
   /**
    * Creates a PluginLoaderBase object.
@@ -25,7 +30,11 @@ class PluginLoaderBase implements PluginLoaderInterface {
    */
   constructor(manager: PluginManagerInterface, pluginId: string) {
     this.manager = manager;
-    this.pluginId = pluginId;
+    const descriptor = manager.get(pluginId);
+    if (!descriptor) {
+      throw Error('Invalid plugin ID');
+    }
+    this.descriptor = descriptor;
     // Validate the plugin. Throws an exception if it's invalid.
     this.manager.check(pluginId);
   }
@@ -33,8 +42,34 @@ class PluginLoaderBase implements PluginLoaderInterface {
   /**
    * @inheritDoc
    */
-  export(options: Object): Object {
+  export(options: Object): Promise<Object> {
     throw new Error('You need to override this method in the actual plugin implementation.');
+  }
+
+  /**
+   * Does the actual export with some postprocessing actions.
+   *
+   * @param {Object} options
+   *   Run-time options to configure your exports.
+   *
+   * @return {Object}
+   *   An object with the functionality.
+   *
+   * @private
+   */
+  _doExport(options: Object): Promise<Object> {
+    return this.export(options)
+      .then((exports) => {
+        if (!this.descriptor.type) {
+          return exports;
+        }
+        return this.manager.instantiate(this.descriptor.type, {})
+          .then((pluginType) => {
+            // Validate the exports.
+            pluginType.exports.validate(exports);
+            return _.pick(exports, pluginType.exports.props);
+          });
+      });
   }
 }
 

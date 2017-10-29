@@ -4,11 +4,16 @@ const sinon = require('sinon');
 
 module.exports = {
   setUp(cb) {
-    const manager = new PluginManager({ discovery: { rootPath: './test' } });
-    manager.check = sinon.spy();
-    this.stubs.push(manager.check);
-    this.loader = new PluginTypeLoaderBase(manager, 'lorem');
-    manager.instantiate('fruit')
+    this.manager = new PluginManager({ discovery: { rootPath: './test' } });
+    this.manager.register({
+      id: 'lorem',
+      loader: 'fake.js',
+      _pluginPath: 'fake',
+    });
+    this.manager.check = sinon.spy();
+    this.stubs.push(this.manager.check);
+    this.loader = new PluginTypeLoaderBase(this.manager, 'lorem');
+    this.manager.instantiate('fruit')
       .then((instance) => {
         this.typeInstance = instance;
         cb();
@@ -18,7 +23,8 @@ module.exports = {
     test.expect(1);
     test.deepEqual(this.typeInstance, {
       exports: {
-        props: ['isBerry', 'isGood', 'size'],
+        props: ['sugarLevel', 'color', 'size'],
+        validate: {},
         plugins: [
           {
             id: 'avocado',
@@ -54,6 +60,23 @@ module.exports = {
   definePluginProperties(test) {
     test.expect(1);
     test.throws(() => this.loader.definePluginProperties(), 'Error');
+    test.done();
+  },
+  validate(test) {
+    test.expect(1);
+    this.manager.instantiate('pear')
+      .catch((error) => {
+        test.strictEqual(
+          error.message,
+          'The plugin of type fruit is missing properties: sugarLevel, color.'
+        );
+        test.done();
+      });
+  },
+  _typePluginProperties(test) {
+    test.expect(1);
+    const loader = new PluginTypeLoaderBase(this.manager, 'lorem');
+    test.deepEqual(loader._typePluginProperties(), ['props', 'plugins', 'validate']);
     test.done();
   },
 };

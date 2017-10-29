@@ -5,6 +5,6 @@ module.exports = class FruitLoader extends PluginTypeLoaderBase {
    * @inheritDoc
    */
   definePluginProperties() {
-    return ['isBerry', 'isGood', 'size'];
+    return ['sugarLevel', 'color', 'size'];
   }
 };
