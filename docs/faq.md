@@ -3,10 +3,33 @@
 Plugins offer several features that you can't easily obtain with `require('./some/code')`:
   * 3rd party modules can provide plugins that your app can discover for feature enhancements.
   * Typed plugins ensure expectations on what is returned.
+  * Plugins can contain additional metadata in `plugnplay.yml`.
   * Plugins can be registered at run-time.
   * Plugins can return a promise. This allows you to do _async requires_.
   * Plugins are auto-discovered and instantiated by ID. Requiring a plugin does not depend on the
   directory you are in.
+### Can all the pluggability resolve at build time?
+Yes, it can! Well no, but almost. Since the plug-in dependency resolution can also happen over I/O
+you will need to resolve a promise. This is how you'd do almost-build-time pluggability:
+
+```js
+// app.js cares about pluginWithIO and plugin2 (plugin0 is also added via dependencies).
+
+const { PluginManager } = require('plugnplay');
+
+const manager = new PluginManager();
+
+Promise.all([
+  manager.get('pluginWithIO'),
+  manager.get('plugin2'),
+])
+// All plugins are found and cached at this point.
+.then(([pluginWithIO, plugin2]) => {
+  // Your app code that depends on plugins happen here.
+  doSomeCoolStuff(pluginWithIO, plugin2);
+});
+```
+
 ### Can external modules provide plugins?
 They can! Just by declaring the plugin, anyone can find that module in the filesystem. If your
 application needs plugins provided by 3rd party modules, make sure to enable the `allowsContributed`
