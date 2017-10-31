@@ -1,0 +1,7 @@
+id: ripeAvocado
+name: Ripe Avocado
+description: The main ingredient for *GOOD* guacamole.
+decorates: avocado
+
+# Custom properties
+sugarLevel: medium

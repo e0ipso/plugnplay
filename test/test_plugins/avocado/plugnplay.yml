@@ -5,3 +5,5 @@ loader: loader.js
 type: fruit
 dependencies:
   - mango
+# Custom properties
+sugarLevel: low

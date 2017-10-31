@@ -43,7 +43,7 @@ class PluginTypeLoaderBase extends PluginLoaderBase implements PluginTypeLoaderI
    * @inheritDoc
    */
   findPlugins() {
-    return this.manager.all().filter(({ type }) => type === this.descriptor.id);
+    return [...this.manager.all()].filter(({ type }) => type === this.descriptor.id);
   }
 
   /**

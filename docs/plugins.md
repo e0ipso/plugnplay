@@ -86,3 +86,9 @@ loader: loader.js
 # The ID of the Fruit plugin.
 type: fruit
 ```
+
+### Decorated Plugins
+Decorated plugins are a great way to define plugins that are driven only by the `plugnplay.yml`
+file.
+
+For an example of a decorated plugin see the [Ripe Avocado plugin](/test/test_plugins/ripeAvocado).

@@ -25,6 +25,7 @@ module.exports = {
             description: 'The main ingredient for guacamole.',
             loader: 'loader.js',
             type: 'fruit',
+            sugarLevel: 'low',
           },
           {
             id: 'fruit',
@@ -58,11 +59,22 @@ module.exports = {
             loader: 'loader.js',
             type: 'fruit',
           },
+          {
+            id: 'ripeAvocado',
+            loader: '../avocado/loader.js',
+            dependencies: ['avocado', 'fruit'],
+            _pluginPath: './test/test_plugins/ripeAvocado',
+            name: 'Ripe Avocado',
+            description: 'The main ingredient for *GOOD* guacamole.',
+            type: 'fruit',
+            sugarLevel: 'medium',
+            decorates: 'avocado',
+          },
         ];
-        test.deepEqual(descriptors, expected);
+        test.deepEqual([...descriptors], expected);
         this.manager.discover()
           .then((cachedDescriptors) => {
-            test.deepEqual(cachedDescriptors, expected);
+            test.deepEqual([...cachedDescriptors], expected);
             test.done();
           });
       });
@@ -88,8 +100,8 @@ module.exports = {
       });
   },
   register(test) {
-    test.expect(3);
-    let registered = this.manager.register({
+    test.expect(2);
+    const registered = this.manager.register({
       id: 'lorem',
       name: 'Lorem',
       loader: 'loader.js',
@@ -101,20 +113,13 @@ module.exports = {
       loader: 'loader.js',
       _pluginPath: './test/test_plugins',
     });
-    test.deepEqual(this.manager.registeredDescriptors, [{
+    test.deepEqual([...this.manager.registeredDescriptors], [{
       id: 'lorem',
       dependencies: [],
       _pluginPath: './test/test_plugins',
       name: 'Lorem',
       loader: 'loader.js',
     }]);
-    registered = this.manager.register({
-      id: 'lorem',
-      name: 'Lorem',
-      loader: 'loader.js',
-      _pluginPath: './test/test_plugins',
-    });
-    test.ok(!registered);
     test.done();
   },
   instantiate(test) {
@@ -135,6 +140,7 @@ module.exports = {
               description: 'The main ingredient for guacamole.',
               loader: 'loader.js',
               type: 'fruit',
+              sugarLevel: 'low',
             },
         });
         test.equal(fruits[1].exports.color, 'green');
@@ -157,7 +163,7 @@ module.exports = {
       .catch((error) => {
         test.equal(
           error.message,
-          'Unable to find plugin with ID: "fail". Available plugins are: avocado, fruit, invalid_loader, mango, pear'
+          'Unable to find plugin with ID: "fail". Available plugins are: avocado, fruit, invalid_loader, mango, pear, ripeAvocado'
         );
         test.done();
       });
@@ -209,7 +215,30 @@ module.exports = {
       _pluginPath: 'foo',
     };
     this.manager.register(descriptor);
-    test.deepEqual(this.manager.all(), [descriptor]);
+    test.deepEqual([...this.manager.all()], [descriptor]);
+    test.done();
+  },
+  decorates(test) {
+    test.expect(4);
+    this.manager.instantiate('ripeAvocado', { colorType: 'hex' })
+      .then((instance) => {
+        test.equals(instance.descriptor.loader, '../avocado/loader.js');
+        test.equals(instance.exports.color, '#33AA33');
+        test.equals(instance.exports.sugarLevel, 'medium');
+        test.equals(instance.descriptor.sugarLevel, 'medium');
+        test.done();
+      });
+  },
+  decoratesFail(test) {
+    test.expect(1);
+    test.throws(() => {
+      this.manager.register({
+        id: 'failing',
+        dependencies: [],
+        _pluginPath: 'foo',
+        decorates: 'fail',
+      });
+    }, 'Error');
     test.done();
   },
 };
