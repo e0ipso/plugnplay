@@ -7,7 +7,7 @@ import type {
   PluginInstance,
 } from '../types/common';
 
-const { dirname } = require('path');
+const path = require('path');
 const glob = require('glob');
 const fs = require('fs');
 const _ = require('lodash');
@@ -26,7 +26,7 @@ const PLUGNPLAY_FILE = 'plugnplay.yml';
  */
 class PluginManager implements PluginManagerInterface {
   config: PluginManagerConfig;
-  registeredDescriptors: Array<PluginDescriptor>;
+  registeredDescriptors: Set<PluginDescriptor>;
   discovered: boolean;
   instances: Map<string, PluginInstance>;
 
@@ -44,7 +44,7 @@ class PluginManager implements PluginManagerInterface {
       },
     };
     this.config = _.merge(defaults, config);
-    this.registeredDescriptors = [];
+    this.registeredDescriptors = new Set();
     this.discovered = false;
     this.instances = new Map();
   }
@@ -67,7 +67,7 @@ class PluginManager implements PluginManagerInterface {
   /**
    * @inheritDoc
    */
-  discover(): Promise<Array<PluginDescriptor>> {
+  discover(): Promise<Set<PluginDescriptor>> {
     if (this.discovered) {
       return Promise.resolve(this.registeredDescriptors);
     }
@@ -96,25 +96,31 @@ class PluginManager implements PluginManagerInterface {
           try {
             doc = yaml.safeLoad(data.content);
             // Add defaults.
-            doc = this._addDefaults(doc, dirname(data.filePath));
+            doc = this._addDefaults(doc, path.dirname(data.filePath));
           }
           catch (e) {
             return null;
           }
-          // Exclude docs without the required keys.
-          return _.has(doc, 'id') && _.has(doc, 'loader') ? doc : null;
+          return doc;
         });
         return docs.filter(_.identity);
       })
       .then((descriptors) => {
         // Register the discovered descriptors.
-        this.registeredDescriptors = _.uniqBy(
-          this.registeredDescriptors.concat(descriptors),
-          'id'
-        );
+        this.registeredDescriptors = new Set([...this.registeredDescriptors, ...descriptors]);
+        descriptors
+          .filter(({ decorates }) => decorates)
+          .forEach(descriptor => this.register(descriptor));
+        // Exclude docs without the required keys.
+        this.registeredDescriptors
+          .forEach((doc) => {
+            if (doc.id === '' || doc.loader === '') {
+              this.registeredDescriptors.delete(doc);
+            }
+          });
         // Set the discovered flag to true.
         this.discovered = true;
-        return descriptors;
+        return this.registeredDescriptors;
       });
   }
 
@@ -134,6 +140,7 @@ class PluginManager implements PluginManagerInterface {
   _addDefaults(doc: Object, pluginPath: string): PluginDescriptor {
     const output = Object.assign({}, {
       id: '',
+      loader: 'loader.js',
       dependencies: [],
       _pluginPath: pluginPath,
     }, doc);
@@ -141,6 +148,37 @@ class PluginManager implements PluginManagerInterface {
       output.dependencies.push(doc.type);
     }
     output.dependencies = _.uniq(output.dependencies);
+    return output;
+  }
+
+  /**
+   * Pulls in data from the decorated descriptor into the current descriptor.
+   *
+   * @param {PluginDescriptor} descriptor
+   *   The decorated descriptor.
+   *
+   * @returns {PluginDescriptor}
+   *   The descriptor with the values from the decorated.
+   *
+   * @private
+   */
+  _decorateDescriptor(descriptor: PluginDescriptor): PluginDescriptor {
+    let output = Object.assign({}, descriptor);
+    if (typeof descriptor.decorates === 'undefined') {
+      return output;
+    }
+    const decoratedId: string = descriptor.decorates;
+    output.dependencies.push(decoratedId);
+    const decoratedDescriptor = this.get(decoratedId);
+    if (!decoratedDescriptor) {
+      throw new Error('Unable to find the decorated plugin');
+    }
+    output = _.merge({}, decoratedDescriptor, output);
+    output = this._addDefaults(output, output._pluginPath);
+    // Calculate how to modify the loader path so it can be required from the
+    // decorator path.
+    const pathFix = path.relative(descriptor._pluginPath, decoratedDescriptor._pluginPath);
+    output.loader = path.join(pathFix, output.loader);
     return output;
   }
 
@@ -154,11 +192,11 @@ class PluginManager implements PluginManagerInterface {
     }
     return this.discover()
       .then((descriptors) => {
-        const descriptor = descriptors
+        const descriptor = [...descriptors]
           .find(({ id }) => id === pluginId);
         if (typeof descriptor === 'undefined') {
           let msg = `Unable to find plugin with ID: "${pluginId}".`;
-          msg += ` Available plugins are: ${_.map(descriptors, 'id').join(', ')}`;
+          msg += ` Available plugins are: ${_.map([...descriptors], 'id').join(', ')}`;
           throw new Error(msg);
         }
         const loader = PluginLoaderFactory.create(descriptor, this, pluginId);
@@ -186,13 +224,16 @@ class PluginManager implements PluginManagerInterface {
    * @inheritDoc
    */
   register(descriptor: Object): boolean {
-    if (this.registeredDescriptors.find(({ id }) => id === descriptor.id)) {
-      return false;
+    const existing = [...this.registeredDescriptors].find(({ id }) => id === descriptor.id);
+    if (existing) {
+      this.registeredDescriptors.delete(existing);
     }
     if (typeof descriptor._pluginPath === 'undefined') {
       return false;
     }
-    this.registeredDescriptors.push(this._addDefaults(descriptor, descriptor._pluginPath));
+    const output = this
+      ._decorateDescriptor(this._addDefaults(descriptor, descriptor._pluginPath));
+    this.registeredDescriptors.add(output);
     return true;
   }
 
@@ -200,7 +241,7 @@ class PluginManager implements PluginManagerInterface {
    * @inheritDoc
    */
   get(pluginId: string): ?PluginDescriptor {
-    return this.registeredDescriptors.find(({ id }) => id === pluginId);
+    return [...this.registeredDescriptors].find(({ id }) => id === pluginId);
   }
 
   /**
@@ -224,7 +265,7 @@ class PluginManager implements PluginManagerInterface {
   /**
    * @inheritDoc
    */
-  all(): Array<PluginDescriptor> {
+  all(): Set<PluginDescriptor> {
     return this.registeredDescriptors;
   }
 }

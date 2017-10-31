@@ -17,6 +17,7 @@ export type PluginDescriptor = {
   dependencies: Array<string>,
   _pluginPath: string,
   type?: string,
+  decorates?: string,
 };
 
 export type PluginInstance = {
@@ -31,7 +32,7 @@ export interface PluginManagerInterface {
    * @return {Promise.<PluginDescriptor[]>}
    *   The list of descriptors for the plugins in the system.
    */
-  discover(): Promise<Array<PluginDescriptor>>;
+  discover(): Promise<Set<PluginDescriptor>>;
 
   /**
    * Finds the plugin and does a dynamic require to whatever the plugin exports.
@@ -56,8 +57,7 @@ export interface PluginManagerInterface {
    *   The plugin descriptor to register.
    *
    * @return {boolean}
-   *   TRUE if the descriptor was registered. FALSE if the descriptor was
-   *   already registered.
+   *   TRUE if the descriptor was registered. FALSE if there was an error.
    */
   register(descriptor: Object): boolean;
 
@@ -88,7 +88,7 @@ export interface PluginManagerInterface {
    *
    * @return {PluginDescriptor[]}
    */
-  all(): Array<PluginDescriptor>;
+  all(): Set<PluginDescriptor>;
 }
 
 export interface PluginLoaderInterface {
