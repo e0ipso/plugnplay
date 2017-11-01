@@ -19,49 +19,49 @@ module.exports = {
         const expected = [
           {
             id: 'avocado',
+            loader: 'customLoader.js',
             dependencies: ['mango', 'fruit'],
             _pluginPath: './test/test_plugins/avocado',
             name: 'Avocado',
             description: 'The main ingredient for guacamole.',
-            loader: 'loader.js',
             type: 'fruit',
             sugarLevel: 'low',
           },
           {
             id: 'fruit',
+            loader: 'loader.js',
             dependencies: [],
             _pluginPath: './test/test_plugins/fruit',
             name: 'Fruit',
             description: 'A type of delicious food.',
-            loader: 'loader.js',
           },
           {
             id: 'invalid_loader',
+            loader: 'loader.js',
             dependencies: [],
             _pluginPath: './test/test_plugins/invalid_loader',
             name: 'Invalid Loader',
-            loader: 'loader.js',
           },
           {
             id: 'mango',
+            loader: 'loader.js',
             dependencies: [],
             _pluginPath: './test/test_plugins/mango',
             name: 'Mango',
             description: 'It\'s an orange sweet oval.',
-            loader: 'loader.js',
           },
           {
             id: 'pear',
+            loader: 'loader.js',
             dependencies: ['fruit'],
             _pluginPath: './test/test_plugins/pear',
             name: 'Pear',
             description: 'A kind of fruit',
-            loader: 'loader.js',
             type: 'fruit',
           },
           {
             id: 'ripeAvocado',
-            loader: '../avocado/loader.js',
+            loader: '../avocado/customLoader.js',
             dependencies: ['avocado', 'fruit'],
             _pluginPath: './test/test_plugins/ripeAvocado',
             name: 'Ripe Avocado',
@@ -134,11 +134,11 @@ module.exports = {
           descriptor:
             {
               id: 'avocado',
+              loader: 'customLoader.js',
               dependencies: ['mango', 'fruit'],
               _pluginPath: './test/test_plugins/avocado',
               name: 'Avocado',
               description: 'The main ingredient for guacamole.',
-              loader: 'loader.js',
               type: 'fruit',
               sugarLevel: 'low',
             },
@@ -222,7 +222,7 @@ module.exports = {
     test.expect(4);
     this.manager.instantiate('ripeAvocado', { colorType: 'hex' })
       .then((instance) => {
-        test.equals(instance.descriptor.loader, '../avocado/loader.js');
+        test.equals(instance.descriptor.loader, '../avocado/customLoader.js');
         test.equals(instance.exports.color, '#33AA33');
         test.equals(instance.exports.sugarLevel, 'medium');
         test.equals(instance.descriptor.sugarLevel, 'medium');
