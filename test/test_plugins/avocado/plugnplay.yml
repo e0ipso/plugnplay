@@ -1,7 +1,7 @@
 id: avocado
 name: Avocado
 description: The main ingredient for guacamole.
-loader: loader.js
+loader: customLoader.js
 type: fruit
 dependencies:
   - mango

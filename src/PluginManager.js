@@ -178,7 +178,7 @@ class PluginManager implements PluginManagerInterface {
     // Calculate how to modify the loader path so it can be required from the
     // decorator path.
     const pathFix = path.relative(descriptor._pluginPath, decoratedDescriptor._pluginPath);
-    output.loader = path.join(pathFix, output.loader);
+    output.loader = path.join(pathFix, decoratedDescriptor.loader);
     return output;
   }
 

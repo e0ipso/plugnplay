@@ -32,7 +32,7 @@ module.exports = {
             _pluginPath: './test/test_plugins/avocado',
             name: 'Avocado',
             description: 'The main ingredient for guacamole.',
-            loader: 'loader.js',
+            loader: 'customLoader.js',
             type: 'fruit',
             sugarLevel: 'low',
           },
@@ -47,7 +47,7 @@ module.exports = {
           },
           {
             id: 'ripeAvocado',
-            loader: '../avocado/loader.js',
+            loader: '../avocado/customLoader.js',
             dependencies: ['avocado', 'fruit'],
             _pluginPath: './test/test_plugins/ripeAvocado',
             name: 'Ripe Avocado',
