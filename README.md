@@ -142,6 +142,11 @@ This way your User plugin can be initialized synchronously from your apps data, 
 using GitHub's data. You don't care where the info came from, you just use the plugin instance!
 
 ## Create a Plugin
+
+### Watch the Video Tutorials
+[![Alt text](https://monosnap.com/file/Gp8A3BfwZynDQ0QHQPzMPFV3g7sCYt.png)](https://youtu.be/8GuUtXHZvo8)
+
+### The basics
 A plugin is just a directory that contains a `plugnplay.yml` file and a loader. For instance:
 
 ```

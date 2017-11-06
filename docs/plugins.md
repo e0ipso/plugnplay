@@ -1,4 +1,9 @@
 ## Create a Plugin
+
+### Watch the Video Tutorials
+[![Alt text](https://monosnap.com/file/Gp8A3BfwZynDQ0QHQPzMPFV3g7sCYt.png)](https://youtu.be/8GuUtXHZvo8)
+
+### The basics
 A plugin is just a directory that contains a `plugnplay.yml` file and a loader. For instance:
 
 ```
