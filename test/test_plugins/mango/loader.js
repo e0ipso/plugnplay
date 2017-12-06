@@ -4,7 +4,7 @@ module.exports = class MangoLoader extends PluginLoaderBase {
   /**
    * @inheritDoc
    */
-  export(options) {
-    return Promise.resolve('FAILS!');
+  exportSync(options) {
+    return 'FAILS!';
   }
 };

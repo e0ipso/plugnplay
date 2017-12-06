@@ -8,13 +8,14 @@ import type {
   DescriptorFileContents,
 } from '../types/common';
 
-const path = require('path');
-const glob = require('glob');
-const fs = require('fs');
 const _ = require('lodash');
+const fs = require('fs');
+const glob = require('glob');
+const md5 = require('md5');
+const path = require('path');
+const PluginLoaderFactory = require('./PluginLoaderFactory');
 const pify = require('pify');
 const yaml = require('js-yaml');
-const PluginLoaderFactory = require('./PluginLoaderFactory');
 
 const readFile = pify(fs.readFile);
 const PLUGNPLAY_FILE = 'plugnplay.yml';
@@ -230,7 +231,7 @@ class PluginManager implements PluginManagerInterface {
    * @inheritDoc
    */
   instantiate(pluginId: string, options: Object = {}): Promise<PluginInstance> {
-    const inst = this.instances.get(pluginId);
+    const inst = this.instances.get(this._getCid(pluginId, options));
     if (inst) {
       return Promise.resolve(inst);
     }
@@ -253,15 +254,52 @@ class PluginManager implements PluginManagerInterface {
           return loader._doExport(options)
             .then(exports => ({ exports, descriptor }));
         }
-        throw new Error(`Unable to find or execute the plugin loader for plugin "${pluginId}" (found ${loader.constructor.name}).`);
+        let msg = `Unable to find or execute the plugin loader for plugin "${pluginId}"`;
+        msg += ` (found ${loader.constructor.name}).`;
+        throw new Error(msg);
       })
       .then((instance) => {
         if (!(instance.exports instanceof Object)) {
           throw new Error(`The plugin "${pluginId}" did not return an object after loading.`);
         }
-        this.instances.set(instance.descriptor.id, instance);
+        this.instances.set(this._getCid(instance.descriptor.id, options), instance);
         return instance;
       });
+  }
+
+  /**
+   * @inheritDoc
+   */
+  require(pluginId: string, options: Object = {}): PluginInstance {
+    const inst = this.instances.get(this._getCid(pluginId, options));
+    if (inst) {
+      return inst;
+    }
+    const descriptors = this.discoverSync();
+    const descriptor = [...descriptors]
+      .find(({ id }) => id === pluginId);
+    if (typeof descriptor === 'undefined') {
+      let msg = `Unable to find plugin with ID: "${pluginId}".`;
+      msg += ` Available plugins are: ${_.map([...descriptors], 'id').join(', ')}`;
+      throw new Error(msg);
+    }
+    const loader = PluginLoaderFactory.create(descriptor, this, pluginId);
+    if (
+      typeof loader._doExportSync !== 'function' ||
+      typeof loader.exportSync !== 'function' ||
+      !loader.constructor.prototype
+    ) {
+      let msg = `Unable to find or execute the plugin loader for plugin "${pluginId}"`;
+      msg += ` (found ${loader.constructor.name}).`;
+      throw new Error(msg);
+    }
+    // Get the object with the actual functionality.
+    const instance = { exports: loader._doExportSync(options), descriptor };
+    if (!(instance.exports instanceof Object)) {
+      throw new Error(`The plugin "${pluginId}" did not return an object after loading.`);
+    }
+    this.instances.set(this._getCid(instance.descriptor.id, options), instance);
+    return instance;
   }
 
   /**
@@ -311,6 +349,23 @@ class PluginManager implements PluginManagerInterface {
    */
   all(): Set<PluginDescriptor> {
     return this.registeredDescriptors;
+  }
+
+  /**
+   * Generates a cache ID for the plugin and the config.
+   *
+   * @param {string} pluginId
+   *   The plugin ID.
+   * @param {Object} options
+   *   The options for the plugin.
+   *
+   * @return {string}
+   *   The cache ID.
+   *
+   * @private
+   */
+  _getCid(pluginId: string, options: Object): string {
+    return md5(`${pluginId}::${JSON.stringify(options)}`);
   }
 }
 
