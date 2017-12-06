@@ -9,6 +9,11 @@ export type PluginManagerConfig = {
   discovery: PluginDiscoveryConfig,
 };
 
+export type DescriptorFileContents = {
+  content: string,
+  filePath: string,
+};
+
 export type PluginDescriptor = {
   id: string,
   name?: string,

@@ -5,6 +5,7 @@ import type {
   PluginManagerInterface,
   PluginDescriptor,
   PluginInstance,
+  DescriptorFileContents,
 } from '../types/common';
 
 const path = require('path');
@@ -17,11 +18,6 @@ const PluginLoaderFactory = require('./PluginLoaderFactory');
 
 const readFile = pify(fs.readFile);
 const PLUGNPLAY_FILE = 'plugnplay.yml';
-
-type DescriptorFileContents = {
-  content: string,
-  filePath: string,
-};
 
 /**
  * @classdesc

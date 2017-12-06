@@ -31,7 +31,7 @@
     "semantic-release": "semantic-release pre && npm publish && semantic-release post",
     "postinstall": "npm run build",
     "flow": "flow",
-    "build": "flow-remove-types src/ --out-dir lib/ && flow-copy-source src lib",
+    "build": "rm -fr lib; flow-remove-types --all src/ --out-dir lib/ && copy ./src/**/plugnplay.yml lib && flow-copy-source src lib",
     "lint": "eslint src",
     "emdaer": "emdaer"
   },
@@ -56,6 +56,7 @@
     "validate-commit-msg": "^2.14.0"
   },
   "dependencies": {
+    "copy": "^0.3.1",
     "coveralls": "^3.0.0",
     "easy-factory": "^1.3.0",
     "flow-copy-source": "^1.2.1",
