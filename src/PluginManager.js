@@ -8,13 +8,14 @@ import type {
   DescriptorFileContents,
 } from '../types/common';
 
-const path = require('path');
-const glob = require('glob');
-const fs = require('fs');
 const _ = require('lodash');
+const fs = require('fs');
+const glob = require('glob');
+const md5 = require('md5');
+const path = require('path');
+const PluginLoaderFactory = require('./PluginLoaderFactory');
 const pify = require('pify');
 const yaml = require('js-yaml');
-const PluginLoaderFactory = require('./PluginLoaderFactory');
 
 const readFile = pify(fs.readFile);
 const PLUGNPLAY_FILE = 'plugnplay.yml';
@@ -364,7 +365,7 @@ class PluginManager implements PluginManagerInterface {
    * @private
    */
   _getCid(pluginId: string, options: Object): string {
-    return `${pluginId}::${JSON.stringify(options)}`;
+    return md5(`${pluginId}::${JSON.stringify(options)}`);
   }
 }
 
