@@ -20,14 +20,31 @@ const { PluginManager } = require('plugnplay');
 const manager = new PluginManager();
 
 Promise.all([
-  manager.get('pluginWithIO'),
-  manager.get('plugin2'),
+  manager.instantiate('pluginWithIO'),
+  manager.instantiate('plugin2'),
 ])
 // All plugins are found and cached at this point.
 .then(([pluginWithIO, plugin2]) => {
   // Your app code that depends on plugins happen here.
   doSomeCoolStuff(pluginWithIO, plugin2);
 });
+```
+
+If you know that your plugins can be instantiated synchronously then you can use `manager.require()`
+instead.
+ ```js
+// app.js cares about pluginWithIO and plugin2 (plugin0 is also added via dependencies).
+// If the plugins can be instantiated synchronously, then we can use manager.require().
+const { PluginManager } = require('plugnplay');
+
+const manager = new PluginManager();
+
+const pluginWithIO = manager.require('pluginWithIO');
+const plugin2 = manager.require('plugin2');
+// All plugins are found and cached at this point.
+
+// Your app code that depends on plugins happen here.
+doSomeCoolStuff(pluginWithIO, plugin2);
 ```
 
 ### Can external modules provide plugins?

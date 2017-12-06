@@ -74,14 +74,31 @@ const { PluginManager } = require('plugnplay');
 const manager = new PluginManager();
 
 Promise.all([
-  manager.get('pluginWithIO'),
-  manager.get('plugin2'),
+  manager.instantiate('pluginWithIO'),
+  manager.instantiate('plugin2'),
 ])
 // All plugins are found and cached at this point.
 .then(([pluginWithIO, plugin2]) => {
   // Your app code that depends on plugins happen here.
   doSomeCoolStuff(pluginWithIO, plugin2);
 });
+```
+
+If you know that your plugins can be instantiated synchronously then you can use `manager.require()`
+instead.
+ ```js
+// app.js cares about pluginWithIO and plugin2 (plugin0 is also added via dependencies).
+// If the plugins can be instantiated synchronously, then we can use manager.require().
+const { PluginManager } = require('plugnplay');
+
+const manager = new PluginManager();
+
+const pluginWithIO = manager.require('pluginWithIO');
+const plugin2 = manager.require('plugin2');
+// All plugins are found and cached at this point.
+
+// Your app code that depends on plugins happen here.
+doSomeCoolStuff(pluginWithIO, plugin2);
 ```
 
 ### Can external modules provide plugins?
@@ -140,6 +157,18 @@ module.exports = UserFromGitHubLoader extends PluginLoaderBase {
 
 This way your User plugin can be initialized synchronously from your apps data, or asynchronously by
 using GitHub's data. You don't care where the info came from, you just use the plugin instance!
+
+## Discover your plugins synchronously
+In some occasions it can be useful to build your plugins synchronously. That's when you need to make
+use of `discoverSync()`.
+
+```js
+const { PluginManager } = require('plugnplay');
+
+const manager = new PluginManager(/* Choose your options */);
+const pluginDescriptors = manager.discoverSync();
+console.log(pluginDescriptors);
+```
 
 ## Create a Plugin
 
