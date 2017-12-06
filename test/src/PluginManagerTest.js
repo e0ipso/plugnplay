@@ -2,6 +2,83 @@ const PluginManager = require('../../lib/PluginManager');
 const sinon = require('sinon');
 const requireSubvert = require('require-subvert')(__dirname);
 
+const discoveryTestHelper = (manager, test, isAssync) => {
+  test.expect(2);
+  const doAssert = (descriptors) => {
+    const expected = [
+      {
+        id: 'avocado',
+        loader: 'customLoader.js',
+        dependencies: ['mango', 'fruit'],
+        _pluginPath: './test/test_plugins/avocado',
+        name: 'Avocado',
+        description: 'The main ingredient for guacamole.',
+        type: 'fruit',
+        sugarLevel: 'low',
+      },
+      {
+        id: 'fruit',
+        loader: 'loader.js',
+        dependencies: [],
+        _pluginPath: './test/test_plugins/fruit',
+        name: 'Fruit',
+        description: 'A type of delicious food.',
+      },
+      {
+        id: 'invalid_loader',
+        loader: 'loader.js',
+        dependencies: [],
+        _pluginPath: './test/test_plugins/invalid_loader',
+        name: 'Invalid Loader',
+      },
+      {
+        id: 'mango',
+        loader: 'loader.js',
+        dependencies: [],
+        _pluginPath: './test/test_plugins/mango',
+        name: 'Mango',
+        description: 'It\'s an orange sweet oval.',
+      },
+      {
+        id: 'pear',
+        loader: 'loader.js',
+        dependencies: ['fruit'],
+        _pluginPath: './test/test_plugins/pear',
+        name: 'Pear',
+        description: 'A kind of fruit',
+        type: 'fruit',
+      },
+      {
+        id: 'ripeAvocado',
+        loader: '../avocado/customLoader.js',
+        dependencies: ['avocado', 'fruit'],
+        _pluginPath: './test/test_plugins/ripeAvocado',
+        name: 'Ripe Avocado',
+        description: 'The main ingredient for *GOOD* guacamole.',
+        type: 'fruit',
+        sugarLevel: 'medium',
+        decorates: 'avocado',
+      },
+    ];
+    test.deepEqual([...descriptors], expected);
+    // Execute one method or the other depending if it's assync or not.
+    if (isAssync) {
+      return manager.discover()
+        .then((cachedDescriptors) => {
+          test.deepEqual([...cachedDescriptors], expected);
+          test.done();
+        });
+    }
+    test.deepEqual([...manager.discoverSync()], expected);
+    test.done();
+  };
+  // Execute one method or the other depending if it's assync or not.
+  if (isAssync) {
+    return manager.discover().then(doAssert);
+  }
+  doAssert(manager.discoverSync());
+};
+
 module.exports = {
   setUp(cb) {
     this.manager = new PluginManager({
@@ -13,71 +90,10 @@ module.exports = {
     cb();
   },
   discover(test) {
-    test.expect(2);
-    this.manager.discover()
-      .then((descriptors) => {
-        const expected = [
-          {
-            id: 'avocado',
-            loader: 'customLoader.js',
-            dependencies: ['mango', 'fruit'],
-            _pluginPath: './test/test_plugins/avocado',
-            name: 'Avocado',
-            description: 'The main ingredient for guacamole.',
-            type: 'fruit',
-            sugarLevel: 'low',
-          },
-          {
-            id: 'fruit',
-            loader: 'loader.js',
-            dependencies: [],
-            _pluginPath: './test/test_plugins/fruit',
-            name: 'Fruit',
-            description: 'A type of delicious food.',
-          },
-          {
-            id: 'invalid_loader',
-            loader: 'loader.js',
-            dependencies: [],
-            _pluginPath: './test/test_plugins/invalid_loader',
-            name: 'Invalid Loader',
-          },
-          {
-            id: 'mango',
-            loader: 'loader.js',
-            dependencies: [],
-            _pluginPath: './test/test_plugins/mango',
-            name: 'Mango',
-            description: 'It\'s an orange sweet oval.',
-          },
-          {
-            id: 'pear',
-            loader: 'loader.js',
-            dependencies: ['fruit'],
-            _pluginPath: './test/test_plugins/pear',
-            name: 'Pear',
-            description: 'A kind of fruit',
-            type: 'fruit',
-          },
-          {
-            id: 'ripeAvocado',
-            loader: '../avocado/customLoader.js',
-            dependencies: ['avocado', 'fruit'],
-            _pluginPath: './test/test_plugins/ripeAvocado',
-            name: 'Ripe Avocado',
-            description: 'The main ingredient for *GOOD* guacamole.',
-            type: 'fruit',
-            sugarLevel: 'medium',
-            decorates: 'avocado',
-          },
-        ];
-        test.deepEqual([...descriptors], expected);
-        this.manager.discover()
-          .then((cachedDescriptors) => {
-            test.deepEqual([...cachedDescriptors], expected);
-            test.done();
-          });
-      });
+    discoveryTestHelper(this.manager, test, true);
+  },
+  discoverSync(test) {
+    discoveryTestHelper(this.manager, test, false);
   },
   discoverInvalid(test) {
     test.expect(2);

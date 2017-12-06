@@ -86,3 +86,15 @@ module.exports = UserFromGitHubLoader extends PluginLoaderBase {
 
 This way your User plugin can be initialized synchronously from your apps data, or asynchronously by
 using GitHub's data. You don't care where the info came from, you just use the plugin instance!
+
+## Discover your plugins synchronously
+In some occasions it can be useful to build your plugins synchronously. That's when you need to make
+use of `discoverSync()`.
+
+```js
+const { PluginManager } = require('plugnplay');
+
+const manager = new PluginManager(/* Choose your options */);
+const pluginDescriptors = manager.discoverSync();
+console.log(pluginDescriptors);
+```
