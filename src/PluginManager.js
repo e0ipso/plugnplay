@@ -18,6 +18,11 @@ const PluginLoaderFactory = require('./PluginLoaderFactory');
 const readFile = pify(fs.readFile);
 const PLUGNPLAY_FILE = 'plugnplay.yml';
 
+type DescriptorFileContents = {
+  content: string,
+  filePath: string,
+};
+
 /**
  * @classdesc
  *   Discovers and instantiates plugins.
@@ -73,7 +78,7 @@ class PluginManager implements PluginManagerInterface {
     }
     // Find all the plugin descriptors.
     const pathsPromise = new Promise((resolve, reject) => {
-      // Only consider files with the patter *Normalizer.js.
+      // Only consider files with the expected pattern.
       glob(this._globExpression(), (err, res: Array<string>) => {
         if (err) {
           reject(err);
@@ -90,38 +95,81 @@ class PluginManager implements PluginManagerInterface {
           filePath,
         })))))
       // Parse the YAML content and detect invalid files.
-      .then((contents) => {
-        const docs = contents.map((data) => {
-          let doc;
-          try {
-            doc = yaml.safeLoad(data.content);
-            // Add defaults.
-            doc = this._addDefaults(doc, path.dirname(data.filePath));
-          }
-          catch (e) {
-            return null;
-          }
-          return doc;
-        });
-        return docs.filter(_.identity);
-      })
-      .then((descriptors) => {
-        // Register the discovered descriptors.
-        this.registeredDescriptors = new Set([...this.registeredDescriptors, ...descriptors]);
-        descriptors
-          .filter(({ decorates }) => decorates)
-          .forEach(descriptor => this.register(descriptor));
-        // Exclude docs without the required keys.
-        this.registeredDescriptors
-          .forEach((doc) => {
-            if (doc.id === '' || doc.loader === '') {
-              this.registeredDescriptors.delete(doc);
-            }
-          });
-        // Set the discovered flag to true.
-        this.discovered = true;
-        return this.registeredDescriptors;
+      .then(contents => this._loadDescriptorsFromContents(contents))
+      .then(descriptors => this._registerDescriptors(descriptors));
+  }
+
+  /**
+   * @inheritDoc
+   */
+  discoverSync(): Set<PluginDescriptor> {
+    if (this.discovered) {
+      return this.registeredDescriptors;
+    }
+    // Find all the plugin descriptors.
+    const paths = glob.sync(this._globExpression());
+    const contents = paths
+      .map((filePath: string): DescriptorFileContents => ({
+        content: fs.readFileSync(filePath).toString(),
+        filePath,
+      }));
+    const descriptors = this._loadDescriptorsFromContents(contents);
+    return this._registerDescriptors(descriptors);
+  }
+
+  /**
+   * Loads the descriptors from the contents of the file candidates.
+   *
+   * @param {DescriptorFileContents[]} contents
+   *   The contents of the plugin candidates.
+   *
+   * @return {PluginDescriptor[]}
+   *   The array of plugin descriptors.
+   *
+   * @private
+   */
+  _loadDescriptorsFromContents(contents: Array<DescriptorFileContents>): Array<PluginDescriptor> {
+    const docs = contents.map((data) => {
+      let doc;
+      try {
+        doc = yaml.safeLoad(data.content);
+        // Add defaults.
+        doc = this._addDefaults(doc, path.dirname(data.filePath));
+      }
+      catch (e) {
+        return null;
+      }
+      return doc;
+    });
+    return docs.filter(_.identity);
+  }
+
+  /**
+   * Register the discovered descriptors.
+   *
+   * @param {PluginDescriptor[]} descriptors
+   *   The discovered descriptors candidates.
+   *
+   * @return {Set<PluginDescriptor>}
+   *   A set of verified descriptors.
+   *
+   * @private
+   */
+  _registerDescriptors(descriptors: Array<PluginDescriptor>): Set<PluginDescriptor> {
+    this.registeredDescriptors = new Set([...this.registeredDescriptors, ...descriptors]);
+    descriptors
+      .filter(({ decorates }) => decorates)
+      .forEach(descriptor => this.register(descriptor));
+    // Exclude docs without the required keys.
+    this.registeredDescriptors
+      .forEach((doc) => {
+        if (doc.id === '' || doc.loader === '') {
+          this.registeredDescriptors.delete(doc);
+        }
       });
+    // Set the discovered flag to true.
+    this.discovered = true;
+    return this.registeredDescriptors;
   }
 
   /**
