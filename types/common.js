@@ -40,6 +40,14 @@ export interface PluginManagerInterface {
   discover(): Promise<Set<PluginDescriptor>>;
 
   /**
+   * Finds all the plugins based on the configuration options synchronously.
+   *
+   * @return {PluginDescriptor[]}
+   *   The list of descriptors for the plugins in the system.
+   */
+  discoverSync(): Set<PluginDescriptor>;
+
+  /**
    * Finds the plugin and does a dynamic require to whatever the plugin exports.
    *
    * @param {string} pluginId
@@ -51,6 +59,21 @@ export interface PluginManagerInterface {
    *   An object containing the exported functionality.
    */
   instantiate(pluginId: string, options: Object): Promise<Object>;
+
+  /**
+   * Finds the plugin and does a dynamic require to whatever the plugin exports.
+   *
+   * This is the synchronous version of instantiate().
+   *
+   * @param {string} pluginId
+   *   The plugin ID.
+   * @param {Object} options
+   *   Run-time options to configure your exports.
+   *
+   * @return {Object}
+   *   An object containing the exported functionality.
+   */
+  require(pluginId: string, options: Object): Object;
 
   /**
    * Registers a plugin descriptor in the manager.
@@ -107,6 +130,17 @@ export interface PluginLoaderInterface {
    *   An object with the functionality.
    */
   export(options: Object): Promise<Object>;
+
+  /**
+   * Exports the plugin content synchronously.
+   *
+   * @param {Object} options
+   *   Run-time options to configure your exports.
+   *
+   * @return {Object}
+   *   An object with the functionality.
+   */
+  exportSync(options: Object): Object;
 }
 
 export interface PluginTypeLoaderInterface extends PluginLoaderInterface {

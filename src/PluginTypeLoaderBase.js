@@ -15,8 +15,8 @@ class PluginTypeLoaderBase extends PluginLoaderBase implements PluginTypeLoaderI
   /**
    * @inheritDoc
    */
-  export(options: Object): Promise<Object> {
-    return Promise.resolve({
+  exportSync(options: Object): Object { // eslint-disable-line no-unused-vars
+    return {
       props: this.definePluginProperties(),
       plugins: this.findPlugins(),
       // Validates the exports of a plugin based on the properties defined in
@@ -26,10 +26,10 @@ class PluginTypeLoaderBase extends PluginLoaderBase implements PluginTypeLoaderI
         const definedProperties = this.definePluginProperties();
         const difference = _.difference(definedProperties, actualProperties);
         if (difference.length !== 0) {
-          throw Error(`The plugin of type ${this.descriptor.id} is missing properties: ${difference.join(', ')}.`);
+          throw Error(`The plugin of type ${this.descriptor.id} is missing properties: ${difference.join(', ')}.`); // eslint-disable-line max-len
         }
       },
-    });
+    };
   }
 
   /**
