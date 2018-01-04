@@ -40,19 +40,19 @@
     "polymorphism"
   ],
   "devDependencies": {
-    "babel-eslint": "^8.0.1",
+    "babel-eslint": "^8.1.2",
     "emdaer": "^0.3.3",
-    "eslint": "^4.9.0",
+    "eslint": "^4.14.0",
     "eslint-config-airbnb-base": "^12.1.0",
-    "eslint-plugin-flowtype": "^2.39.1",
+    "eslint-plugin-flowtype": "^2.40.1",
     "eslint-plugin-import": "^2.8.0",
     "flow-bin": "^0.62.0",
     "husky": "^0.14.3",
     "istanbul": "^0.4.5",
     "nodeunit": "^0.11.2",
-    "semantic-release": "^11.0.2",
+    "semantic-release": "^11.2.0",
     "semantic-release-conventional-commits": "^1.2.0",
-    "sinon": "^4.0.2",
+    "sinon": "^4.1.3",
     "validate-commit-msg": "^2.14.0"
   },
   "dependencies": {
