@@ -46,7 +46,7 @@
     "eslint-config-airbnb-base": "^12.1.0",
     "eslint-plugin-flowtype": "^2.40.1",
     "eslint-plugin-import": "^2.8.0",
-    "flow-bin": "^0.62.0",
+    "flow-bin": "^0.63.0",
     "husky": "^0.14.3",
     "istanbul": "^0.4.5",
     "nodeunit": "^0.11.2",
