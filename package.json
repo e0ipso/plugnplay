@@ -51,7 +51,7 @@
     "istanbul": "^0.4.5",
     "nodeunit": "^0.11.2",
     "semantic-release": "^15.0.0",
-    "semantic-release-conventional-commits": "^1.2.0",
+    "semantic-release-conventional-commits": "^2.0.0",
     "sinon": "^5.0.0",
     "validate-commit-msg": "^2.14.0"
   },
