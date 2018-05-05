@@ -52,7 +52,7 @@
     "nodeunit": "^0.11.2",
     "semantic-release": "^15.0.0",
     "semantic-release-conventional-commits": "^1.2.0",
-    "sinon": "^4.1.3",
+    "sinon": "^5.0.0",
     "validate-commit-msg": "^2.14.0"
   },
   "dependencies": {
