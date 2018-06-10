@@ -1,32 +1,34 @@
 language: node_js
-notifications:
-  email: false
-node_js:
-  - '6'
-  - '8'
-env:
-  - CXX=g++-4.8
 cache:
   directories:
     - node_modules
     - .tmp
-    - ~/.npm
+notifications:
+  email: false
 before_install:
-  - git fetch origin --tags
-  - npm install --global npm@5
-  - npm install --global greenkeeper-lockfile@1
-before_script:
-  - greenkeeper-lockfile-update
-script:
-  - npm test
-after_script:
-  - greenkeeper-lockfile-upload
-after_success:
-  # Report coverage to coveralls.io
-  - cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js
-  - rm -rf ./coverage
-  - npm run semantic-release
+  - git fetch --tags
 
-branches:
-  except:
-    - /^v\d+\.\d+\.\d+$/
+stages:
+  - name: test
+    # require the event type to not be a semantic release tag.
+    if: NOT tag =~ ^v\d+\.\d+\.\d+$
+
+jobs:
+  include:
+    -
+      stage: test
+      node_js: 'lts/carbon'
+      script:
+        - yarn lint
+        - yarn test
+        - yarn add --no-lockfile coveralls
+        # Report coverage to coveralls.io
+        - cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js
+        - rm -rf ./coverage
+
+    -
+      stage: deploy
+      if: branch = master
+      # Semantic release will fail if it's not using node 8.
+      node_js: 'lts/carbon'
+      script: yarn semantic-release
