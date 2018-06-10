@@ -28,7 +28,7 @@
     "commitmsg": "validate-commit-msg",
     "precommit": "npm run flow && npm run lint",
     "prepush": "npm test && npm run coverage",
-    "semantic-release": "semantic-release pre && npm publish && semantic-release post",
+    "semantic-release": "semantic-release",
     "postinstall": "npm run build",
     "flow": "flow",
     "build": "rm -fr lib; flow-remove-types --all src/ --out-dir lib/ && copy ./src/**/plugnplay.yml lib && flow-copy-source src lib",
@@ -50,7 +50,7 @@
     "husky": "^0.14.3",
     "istanbul": "^0.4.5",
     "nodeunit": "^0.11.2",
-    "semantic-release": "^15.0.0",
+    "semantic-release": "^15.4.1",
     "semantic-release-conventional-commits": "^2.0.0",
     "sinon": "^5.0.0",
     "validate-commit-msg": "^2.14.0"
@@ -68,5 +68,8 @@
     "md5": "^2.2.1",
     "pify": "^3.0.0",
     "require-subvert": "^0.1.0"
+  },
+  "release": {
+    "analyzeCommits": "semantic-release-conventional-commits"
   }
 }
