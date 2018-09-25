@@ -40,7 +40,7 @@
     "polymorphism"
   ],
   "devDependencies": {
-    "babel-eslint": "^8.1.2",
+    "babel-eslint": "^10.0.0",
     "emdaer": "^0.3.3",
     "eslint": "^5.0.1",
     "eslint-config-airbnb-base": "^12.1.0",
