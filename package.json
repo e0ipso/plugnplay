@@ -47,7 +47,7 @@
     "eslint-plugin-flowtype": "^2.40.1",
     "eslint-plugin-import": "^2.8.0",
     "flow-bin": "^0.81.0",
-    "husky": "^0.14.3",
+    "husky": "^1.0.0",
     "istanbul": "^0.4.5",
     "nodeunit": "^0.11.2",
     "semantic-release": "^15.4.1",
