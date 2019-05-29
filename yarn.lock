@@ -1971,10 +1971,10 @@ flat-cache@^1.2.1:
     graceful-fs "^4.1.2"
     write "^0.2.1"
 
-flow-bin@^0.92.1:
-  version "0.92.1"
-  resolved "https://registry.yarnpkg.com/flow-bin/-/flow-bin-0.92.1.tgz#32c136c07235f30c42dc0549a0790f370fad4070"
-  integrity sha512-F5kC5oQOR2FXROAeybJHFqgZP+moKV9fa/53QK4Q4WayTQHdA0KSl48KD1gP0A9mioRLiKUegTva/7I15cX3Iw==
+flow-bin@^0.99.0:
+  version "0.99.0"
+  resolved "https://registry.yarnpkg.com/flow-bin/-/flow-bin-0.99.0.tgz#df035be2493825ddce0b2f26d1273747465b538c"
+  integrity sha512-PjTzcOwte2mq+aP+HFCQZw/AojltOnOdtZC9iPzkWJJdPH7nYSKkZhC4dFgP24BuXsJH6yZBZ48gEKsX04UegQ==
 
 flow-copy-source@^2.0.0:
   version "2.0.0"
