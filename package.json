@@ -50,7 +50,7 @@
     "husky": "^1.0.0",
     "istanbul": "^0.4.5",
     "nodeunit": "^0.11.2",
-    "semantic-release": "^15.4.1",
+    "semantic-release": "^15.13.21",
     "semantic-release-conventional-commits": "^2.0.0",
     "sinon": "^6.0.1",
     "validate-commit-msg": "^2.14.0"
