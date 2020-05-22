@@ -62,7 +62,7 @@
     "flow-copy-source": "^2.0.0",
     "flow-remove-types": "^1.2.3",
     "glob": "^7.1.2",
-    "js-yaml": "^3.10.0",
+    "js-yaml": "^3.14.0",
     "lodash": "^4.17.10",
     "marked": "^0.6.0",
     "md5": "^2.2.1",
