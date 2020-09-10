@@ -9,7 +9,7 @@ import type {
 } from '../types/common';
 
 const _ = require('lodash');
-const CircularJSON = require('circular-json');
+const { stringify } = require('flatted');
 const fs = require('fs');
 const glob = require('glob');
 const md5 = require('md5');
@@ -366,7 +366,7 @@ class PluginManager implements PluginManagerInterface {
    * @private
    */
   _getCid(pluginId: string, options: Object): string {
-    return md5(`${pluginId}::${CircularJSON.stringify(options)}`);
+    return md5(`${pluginId}::${stringify(options)}`);
   }
 }
 
