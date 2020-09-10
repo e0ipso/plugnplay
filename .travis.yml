@@ -1,4 +1,5 @@
 language: node_js
+node_js: lts/erbium
 cache:
   directories:
     - node_modules
@@ -18,7 +19,6 @@ jobs:
   include:
     -
       stage: test
-      node_js: 'lts/carbon'
       script:
         - npm run lint
         - npm test
@@ -31,5 +31,4 @@ jobs:
       stage: deploy
       if: branch = master
       # Semantic release will fail if it's not using node 8.
-      node_js: 'lts/carbon'
       script: npm run semantic-release
