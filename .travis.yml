@@ -1,5 +1,5 @@
 language: node_js
-node_js: lts/erbium
+node_js: lts/*
 cache:
   directories:
     - node_modules
