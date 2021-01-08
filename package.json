@@ -28,7 +28,7 @@
     "semantic-release": "semantic-release",
     "postinstall": "npm run build",
     "flow": "flow",
-    "build": "rimraf lib && flow-remove-types --all src/ --out-dir lib/ && flow-copy-source src lib",
+    "build": "rimraf lib && flow-remove-types --all src/ --out-dir lib/ && copy ./src/**/plugnplay.yml lib && flow-copy-source src lib",
     "lint": "eslint src",
     "emdaer": "emdaer"
   },
