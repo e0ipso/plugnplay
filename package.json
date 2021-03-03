@@ -27,6 +27,7 @@
     "test": "npm run build && istanbul cover --print both nodeunit ./test",
     "semantic-release": "semantic-release",
     "prepare": "npm run build",
+    "postinstall": "npm run build",
     "flow": "flow",
     "build": "rimraf lib && flow-remove-types --all src/ --out-dir lib/ && copy ./src/**/plugnplay.yml lib && flow-copy-source src lib",
     "lint": "eslint src",
