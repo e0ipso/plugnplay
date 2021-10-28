@@ -13,11 +13,10 @@ module.exports = {
     this.manager.check = sinon.spy();
     this.stubs.push(this.manager.check);
     this.loader = new PluginTypeLoaderBase(this.manager, 'lorem');
-    this.manager.instantiate('fruit')
-      .then((instance) => {
-        this.typeInstance = instance;
-        cb();
-      });
+    this.manager.instantiate('fruit').then((instance) => {
+      this.typeInstance = instance;
+      cb();
+    });
   },
   export(test) {
     test.expect(1);
@@ -76,19 +75,22 @@ module.exports = {
   },
   validate(test) {
     test.expect(1);
-    this.manager.instantiate('pear')
-      .catch((error) => {
-        test.strictEqual(
-          error.message,
-          'The plugin of type fruit is missing properties: sugarLevel, color.'
-        );
-        test.done();
-      });
+    this.manager.instantiate('pear').catch((error) => {
+      test.strictEqual(
+        error.message,
+        'The plugin of type fruit is missing properties: sugarLevel, color.',
+      );
+      test.done();
+    });
   },
   _typePluginProperties(test) {
     test.expect(1);
     const loader = new PluginTypeLoaderBase(this.manager, 'lorem');
-    test.deepEqual(loader._typePluginProperties(), ['props', 'plugins', 'validate']);
+    test.deepEqual(loader._typePluginProperties(), [
+      'props',
+      'plugins',
+      'validate',
+    ]);
     test.done();
   },
 };

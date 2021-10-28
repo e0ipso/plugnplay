@@ -8,10 +8,14 @@ module.exports = {
       loader: 'PluginLoaderFactoryTest.js',
     });
     test.ok(clss.getClass);
-    test.throws(() => PluginLoaderFactory.getClass({
-      _pluginPath: '.',
-      loader: 'fail.js',
-    }), 'Error');
+    test.throws(
+      () =>
+        PluginLoaderFactory.getClass({
+          _pluginPath: '.',
+          loader: 'fail.js',
+        }),
+      'Error',
+    );
     test.done();
   },
 };

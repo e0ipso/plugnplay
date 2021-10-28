@@ -25,7 +25,10 @@ module.exports = {
     test.ok(this.loader.manager.check.calledOnce);
     test.equal(this.loader.manager.constructor.name, 'PluginManager');
     test.equal(this.loader.descriptor.id, 'lorem');
-    test.throws(() => new PluginLoaderBase(new PluginManager(), 'fail'), 'Error');
+    test.throws(
+      () => new PluginLoaderBase(new PluginManager(), 'fail'),
+      'Error',
+    );
     test.done();
   },
 };
