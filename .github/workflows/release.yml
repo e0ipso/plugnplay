@@ -21,11 +21,6 @@ jobs:
         run: npm run build
       - name: Run Tests to Collect Coverage
         run: npm test
-      - name: Update Coverage Badge
-        run: |
-          npm install --no-save coveralls
-          cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js
-          rm -rf ./coverage
       - name: Release to NPM using Semantic Release
         if: ${{ success() }}
         uses: cycjimmy/semantic-release-action@v2
