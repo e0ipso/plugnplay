@@ -28,7 +28,7 @@ export type PluginDescriptor = {
 export type PluginInstance = {
   descriptor: PluginDescriptor,
   exports: Object,
-}
+};
 
 export interface PluginManagerInterface {
   /**
@@ -114,7 +114,7 @@ export interface PluginManagerInterface {
   /**
    * Returns all the the registered plugin descriptors.
    *
-   * @return {PluginDescriptor[]}
+   * @return {Set<PluginDescriptor>}
    */
   all(): Set<PluginDescriptor>;
 }

@@ -50,8 +50,11 @@ class PluginLoaderBase implements PluginLoaderInterface {
   /**
    * @inheritDoc
    */
-  exportSync(options: Object): Object { // eslint-disable-line no-unused-vars
-    throw new Error('You need to override this method in the actual plugin implementation.');
+  exportSync(options: Object): Object {
+    // eslint-disable-line no-unused-vars
+    throw new Error(
+      'You need to override this method in the actual plugin implementation.',
+    );
   }
 
   /**
@@ -66,18 +69,18 @@ class PluginLoaderBase implements PluginLoaderInterface {
    * @private
    */
   _doExport(options: Object): Promise<Object> {
-    return this.export(options)
-      .then((exports) => {
-        if (!this.descriptor.type) {
-          return exports;
-        }
-        return this.manager.instantiate(this.descriptor.type, {})
-          .then((pluginType) => {
-            // Validate the exports.
-            pluginType.exports.validate(exports);
-            return _.pick(exports, pluginType.exports.props);
-          });
-      });
+    return this.export(options).then((exports) => {
+      if (!this.descriptor.type) {
+        return exports;
+      }
+      return this.manager
+        .instantiate(this.descriptor.type, {})
+        .then((pluginType) => {
+          // Validate the exports.
+          pluginType.exports.validate(exports);
+          return _.pick(exports, pluginType.exports.props);
+        });
+    });
   }
 
   /**

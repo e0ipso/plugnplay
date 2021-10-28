@@ -28,13 +28,14 @@ class PluginLoaderFactory extends Factory {
     // the exports.
     const loaderPath: string = path.relative(
       __dirname,
-      path.resolve(descriptor._pluginPath, descriptor.loader)
+      path.resolve(descriptor._pluginPath, descriptor.loader),
     );
     try {
-      return require(loaderPath); // eslint-disable-line import/no-dynamic-require,global-require
-    }
-    catch (e) {
-      throw new Error(`Unable to find or execute the plugin loader for plugin "${descriptor.id}".\n${e.message}.`);
+      return require(loaderPath);
+    } catch (e) {
+      throw new Error(
+        `Unable to find or execute the plugin loader for plugin "${descriptor.id}".\n${e.message}.`,
+      );
     }
   }
 }

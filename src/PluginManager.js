@@ -85,16 +85,23 @@ class PluginManager implements PluginManagerInterface {
         resolve(res);
       });
     });
-    return pathsPromise
-      // Read all the files in the matched paths.
-      .then(paths => Promise.all(paths
-        .map(filePath => readFile(filePath).then(content => ({
-          content: content.toString(),
-          filePath,
-        })))))
-      // Parse the YAML content and detect invalid files.
-      .then(contents => this._loadDescriptorsFromContents(contents))
-      .then(descriptors => this._registerDescriptors(descriptors));
+    return (
+      pathsPromise
+        // Read all the files in the matched paths.
+        .then((paths) =>
+          Promise.all(
+            paths.map((filePath) =>
+              readFile(filePath).then((content) => ({
+                content: content.toString(),
+                filePath,
+              })),
+            ),
+          ),
+        )
+        // Parse the YAML content and detect invalid files.
+        .then((contents) => this._loadDescriptorsFromContents(contents))
+        .then((descriptors) => this._registerDescriptors(descriptors))
+    );
   }
 
   /**
@@ -106,11 +113,10 @@ class PluginManager implements PluginManagerInterface {
     }
     // Find all the plugin descriptors.
     const paths = glob.sync(this._globExpression());
-    const contents = paths
-      .map((filePath: string): DescriptorFileContents => ({
-        content: fs.readFileSync(filePath).toString(),
-        filePath,
-      }));
+    const contents = paths.map((filePath: string): DescriptorFileContents => ({
+      content: fs.readFileSync(filePath).toString(),
+      filePath,
+    }));
     const descriptors = this._loadDescriptorsFromContents(contents);
     return this._registerDescriptors(descriptors);
   }
@@ -126,15 +132,16 @@ class PluginManager implements PluginManagerInterface {
    *
    * @private
    */
-  _loadDescriptorsFromContents(contents: Array<DescriptorFileContents>): Array<PluginDescriptor> {
+  _loadDescriptorsFromContents(
+    contents: Array<DescriptorFileContents>,
+  ): Array<PluginDescriptor> {
     const docs = contents.map((data) => {
       let doc;
       try {
         doc = yaml.safeLoad(data.content);
         // Add defaults.
         doc = this._addDefaults(doc, path.dirname(data.filePath));
-      }
-      catch (e) {
+      } catch (e) {
         return null;
       }
       return doc;
@@ -153,18 +160,22 @@ class PluginManager implements PluginManagerInterface {
    *
    * @private
    */
-  _registerDescriptors(descriptors: Array<PluginDescriptor>): Set<PluginDescriptor> {
-    this.registeredDescriptors = new Set([...this.registeredDescriptors, ...descriptors]);
+  _registerDescriptors(
+    descriptors: Array<PluginDescriptor>,
+  ): Set<PluginDescriptor> {
+    this.registeredDescriptors = new Set([
+      ...this.registeredDescriptors,
+      ...descriptors,
+    ]);
     descriptors
       .filter(({ decorates }) => decorates)
-      .forEach(descriptor => this.register(descriptor));
+      .forEach((descriptor) => this.register(descriptor));
     // Exclude docs without the required keys.
-    this.registeredDescriptors
-      .forEach((doc) => {
-        if (doc.id === '' || doc.loader === '') {
-          this.registeredDescriptors.delete(doc);
-        }
-      });
+    this.registeredDescriptors.forEach((doc) => {
+      if (doc.id === '' || doc.loader === '') {
+        this.registeredDescriptors.delete(doc);
+      }
+    });
     // Set the discovered flag to true.
     this.discovered = true;
     return this.registeredDescriptors;
@@ -184,12 +195,16 @@ class PluginManager implements PluginManagerInterface {
    * @private
    */
   _addDefaults(doc: Object, pluginPath: string): PluginDescriptor {
-    const output = Object.assign({}, {
-      id: '',
-      loader: 'loader.js',
-      dependencies: [],
-      _pluginPath: pluginPath,
-    }, doc);
+    const output = Object.assign(
+      {},
+      {
+        id: '',
+        loader: 'loader.js',
+        dependencies: [],
+        _pluginPath: pluginPath,
+      },
+      doc,
+    );
     if (typeof doc.type !== 'undefined') {
       output.dependencies.push(doc.type);
     }
@@ -223,7 +238,10 @@ class PluginManager implements PluginManagerInterface {
     output = this._addDefaults(output, output._pluginPath);
     // Calculate how to modify the loader path so it can be required from the
     // decorator path.
-    const pathFix = path.relative(descriptor._pluginPath, decoratedDescriptor._pluginPath);
+    const pathFix = path.relative(
+      descriptor._pluginPath,
+      decoratedDescriptor._pluginPath,
+    );
     output.loader = path.join(pathFix, decoratedDescriptor.loader);
     return output;
   }
@@ -238,11 +256,12 @@ class PluginManager implements PluginManagerInterface {
     }
     return this.discover()
       .then((descriptors) => {
-        const descriptor = [...descriptors]
-          .find(({ id }) => id === pluginId);
+        const descriptor = [...descriptors].find(({ id }) => id === pluginId);
         if (typeof descriptor === 'undefined') {
           let msg = `Unable to find plugin with ID: "${pluginId}".`;
-          msg += ` Available plugins are: ${_.map([...descriptors], 'id').join(', ')}`;
+          msg += ` Available plugins are: ${_.map([...descriptors], 'id').join(
+            ', ',
+          )}`;
           throw new Error(msg);
         }
         const loader = PluginLoaderFactory.create(descriptor, this, pluginId);
@@ -252,8 +271,9 @@ class PluginManager implements PluginManagerInterface {
           loader.constructor.prototype
         ) {
           // Get the object with the actual functionality.
-          return loader._doExport(options)
-            .then(exports => ({ exports, descriptor }));
+          return loader
+            ._doExport(options)
+            .then((exports) => ({ exports, descriptor }));
         }
         let msg = `Unable to find or execute the plugin loader for plugin "${pluginId}"`;
         msg += ` (found ${loader.constructor.name}).`;
@@ -261,9 +281,14 @@ class PluginManager implements PluginManagerInterface {
       })
       .then((instance) => {
         if (!(instance.exports instanceof Object)) {
-          throw new Error(`The plugin "${pluginId}" did not return an object after loading.`);
+          throw new Error(
+            `The plugin "${pluginId}" did not return an object after loading.`,
+          );
         }
-        this.instances.set(this._getCid(instance.descriptor.id, options), instance);
+        this.instances.set(
+          this._getCid(instance.descriptor.id, options),
+          instance,
+        );
         return instance;
       });
   }
@@ -277,11 +302,12 @@ class PluginManager implements PluginManagerInterface {
       return inst;
     }
     const descriptors = this.discoverSync();
-    const descriptor = [...descriptors]
-      .find(({ id }) => id === pluginId);
+    const descriptor = [...descriptors].find(({ id }) => id === pluginId);
     if (typeof descriptor === 'undefined') {
       let msg = `Unable to find plugin with ID: "${pluginId}".`;
-      msg += ` Available plugins are: ${_.map([...descriptors], 'id').join(', ')}`;
+      msg += ` Available plugins are: ${_.map([...descriptors], 'id').join(
+        ', ',
+      )}`;
       throw new Error(msg);
     }
     const loader = PluginLoaderFactory.create(descriptor, this, pluginId);
@@ -297,7 +323,9 @@ class PluginManager implements PluginManagerInterface {
     // Get the object with the actual functionality.
     const instance = { exports: loader._doExportSync(options), descriptor };
     if (!(instance.exports instanceof Object)) {
-      throw new Error(`The plugin "${pluginId}" did not return an object after loading.`);
+      throw new Error(
+        `The plugin "${pluginId}" did not return an object after loading.`,
+      );
     }
     this.instances.set(this._getCid(instance.descriptor.id, options), instance);
     return instance;
@@ -307,15 +335,18 @@ class PluginManager implements PluginManagerInterface {
    * @inheritDoc
    */
   register(descriptor: Object): boolean {
-    const existing = [...this.registeredDescriptors].find(({ id }) => id === descriptor.id);
+    const existing = [...this.registeredDescriptors].find(
+      ({ id }) => id === descriptor.id,
+    );
     if (existing) {
       this.registeredDescriptors.delete(existing);
     }
     if (typeof descriptor._pluginPath === 'undefined') {
       return false;
     }
-    const output = this
-      ._decorateDescriptor(this._addDefaults(descriptor, descriptor._pluginPath));
+    const output = this._decorateDescriptor(
+      this._addDefaults(descriptor, descriptor._pluginPath),
+    );
     this.registeredDescriptors.add(output);
     return true;
   }
@@ -338,9 +369,10 @@ class PluginManager implements PluginManagerInterface {
     return descriptor.dependencies.forEach((depId) => {
       try {
         this.check(depId);
-      }
-      catch (e) {
-        throw new Error(`Check failed. Missing dependency "${depId}" for plugin "${pluginId}".`);
+      } catch (e) {
+        throw new Error(
+          `Check failed. Missing dependency "${depId}" for plugin "${pluginId}".`,
+        );
       }
     });
   }

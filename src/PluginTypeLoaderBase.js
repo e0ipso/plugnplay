@@ -1,6 +1,9 @@
 // @flow
 
-import type { PluginTypeLoaderInterface } from '../types/common';
+import type {
+  PluginDescriptor,
+  PluginTypeLoaderInterface,
+} from '../types/common';
 
 const _ = require('lodash');
 const PluginLoaderBase = require('./PluginLoaderBase');
@@ -11,11 +14,15 @@ const PluginLoaderBase = require('./PluginLoaderBase');
  * @class
  *   PluginTypeLoaderBase
  */
-class PluginTypeLoaderBase extends PluginLoaderBase implements PluginTypeLoaderInterface {
+class PluginTypeLoaderBase
+  extends PluginLoaderBase
+  implements PluginTypeLoaderInterface
+{
   /**
    * @inheritDoc
    */
-  exportSync(options: Object): Object { // eslint-disable-line no-unused-vars
+  exportSync(options: Object): Object {
+    // eslint-disable-line no-unused-vars
     return {
       props: this.definePluginProperties(),
       plugins: this.findPlugins(),
@@ -26,7 +33,11 @@ class PluginTypeLoaderBase extends PluginLoaderBase implements PluginTypeLoaderI
         const definedProperties = this.definePluginProperties();
         const difference = _.difference(definedProperties, actualProperties);
         if (difference.length !== 0) {
-          throw Error(`The plugin of type ${this.descriptor.id} is missing properties: ${difference.join(', ')}.`); // eslint-disable-line max-len
+          throw Error(
+            `The plugin of type ${
+              this.descriptor.id
+            } is missing properties: ${difference.join(', ')}.`,
+          ); // eslint-disable-line max-len
         }
       },
     };
@@ -36,14 +47,18 @@ class PluginTypeLoaderBase extends PluginLoaderBase implements PluginTypeLoaderI
    * @inheritDoc
    */
   definePluginProperties() {
-    throw new Error('You need to override this method in the actual plugin implementation.');
+    throw new Error(
+      'You need to override this method in the actual plugin implementation.',
+    );
   }
 
   /**
    * @inheritDoc
    */
-  findPlugins() {
-    return [...this.manager.all()].filter(({ type }) => type === this.descriptor.id);
+  findPlugins(): PluginDescriptor[] {
+    return [...this.manager.all()].filter(
+      ({ type }) => type === this.descriptor.id,
+    );
   }
 
   /**

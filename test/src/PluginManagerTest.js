@@ -37,7 +37,7 @@ const discoveryTestHelper = (manager, test, isAssync) => {
         dependencies: [],
         _pluginPath: './test/test_plugins/mango',
         name: 'Mango',
-        description: 'It\'s an orange sweet oval.',
+        description: "It's an orange sweet oval.",
       },
       {
         id: 'pear',
@@ -63,11 +63,10 @@ const discoveryTestHelper = (manager, test, isAssync) => {
     test.deepEqual([...descriptors], expected);
     // Execute one method or the other depending if it's assync or not.
     if (isAssync) {
-      return manager.discover()
-        .then((cachedDescriptors) => {
-          test.deepEqual([...cachedDescriptors], expected);
-          test.done();
-        });
+      return manager.discover().then((cachedDescriptors) => {
+        test.deepEqual([...cachedDescriptors], expected);
+        test.done();
+      });
     }
     test.deepEqual([...manager.discoverSync()], expected);
     test.done();
@@ -100,20 +99,18 @@ module.exports = {
     let manager = new PluginManager({ discovery: { rootPath: 'foo\n\0c' } });
     manager._globExpression = sinon.stub().callsFake(() => 42);
     this.stubs.push(manager._globExpression);
-    manager.discover()
-      .catch((error) => {
-        test.deepEqual(error.message, 'glob pattern string required');
-        // Now force an error in the glob execution.
-        const stub = sinon.stub().callsFake((p, cb) => cb('Err!'));
-        requireSubvert.subvert('glob', stub);
-        manager = new (requireSubvert.require('../../lib/PluginManager'))();
-        manager.discover()
-          .catch((err) => {
-            test.equal(err, 'Err!');
-            requireSubvert.cleanUp();
-            test.done();
-          });
+    manager.discover().catch((error) => {
+      test.deepEqual(error.message, 'glob pattern string required');
+      // Now force an error in the glob execution.
+      const stub = sinon.stub().callsFake((p, cb) => cb('Err!'));
+      requireSubvert.subvert('glob', stub);
+      manager = new (requireSubvert.require('../../lib/PluginManager'))();
+      manager.discover().catch((err) => {
+        test.equal(err, 'Err!');
+        requireSubvert.cleanUp();
+        test.done();
       });
+    });
   },
   register(test) {
     test.expect(2);
@@ -129,13 +126,18 @@ module.exports = {
       loader: 'loader.js',
       _pluginPath: './test/test_plugins',
     });
-    test.deepEqual([...this.manager.registeredDescriptors], [{
-      id: 'lorem',
-      dependencies: [],
-      _pluginPath: './test/test_plugins',
-      name: 'Lorem',
-      loader: 'loader.js',
-    }]);
+    test.deepEqual(
+      [...this.manager.registeredDescriptors],
+      [
+        {
+          id: 'lorem',
+          dependencies: [],
+          _pluginPath: './test/test_plugins',
+          name: 'Lorem',
+          loader: 'loader.js',
+        },
+      ],
+    );
     test.done();
   },
   instantiate(test) {
@@ -147,17 +149,16 @@ module.exports = {
       .then((fruits) => {
         test.deepEqual(fruits[0], {
           exports: { sugarLevel: 'low', color: '#33AA33', size: 'medium' },
-          descriptor:
-            {
-              id: 'avocado',
-              loader: 'customLoader.js',
-              dependencies: ['mango', 'fruit'],
-              _pluginPath: './test/test_plugins/avocado',
-              name: 'Avocado',
-              description: 'The main ingredient for guacamole.',
-              type: 'fruit',
-              sugarLevel: 'low',
-            },
+          descriptor: {
+            id: 'avocado',
+            loader: 'customLoader.js',
+            dependencies: ['mango', 'fruit'],
+            _pluginPath: './test/test_plugins/avocado',
+            name: 'Avocado',
+            description: 'The main ingredient for guacamole.',
+            type: 'fruit',
+            sugarLevel: 'low',
+          },
         });
         test.equal(fruits[1].exports.color, 'green');
         return this.manager.instantiate('avocado', { colorType: 'name' });
@@ -175,32 +176,35 @@ module.exports = {
     ];
     test.deepEqual(fruits[0], {
       exports: { sugarLevel: 'low', color: '#33AA33', size: 'medium' },
-      descriptor:
-        {
-          id: 'avocado',
-          loader: 'customLoader.js',
-          dependencies: ['mango', 'fruit'],
-          _pluginPath: './test/test_plugins/avocado',
-          name: 'Avocado',
-          description: 'The main ingredient for guacamole.',
-          type: 'fruit',
-          sugarLevel: 'low',
-        },
+      descriptor: {
+        id: 'avocado',
+        loader: 'customLoader.js',
+        dependencies: ['mango', 'fruit'],
+        _pluginPath: './test/test_plugins/avocado',
+        name: 'Avocado',
+        description: 'The main ingredient for guacamole.',
+        type: 'fruit',
+        sugarLevel: 'low',
+      },
     });
     test.equal(fruits[1].exports.color, 'green');
     test.equal(
       this.manager.require('avocado', { colorType: 'name' }).exports.color,
-      'green'
+      'green',
     );
     test.done();
   },
   instantiateErrorNonObject(test) {
     test.expect(1);
     const manager = new PluginManager({ discovery: { rootPath: './test' } });
-    manager.instantiate('mango')
+    manager
+      .instantiate('mango')
       .then(() => test.done())
       .catch((error) => {
-        test.equal(error.message, 'The plugin "mango" did not return an object after loading.');
+        test.equal(
+          error.message,
+          'The plugin "mango" did not return an object after loading.',
+        );
         test.done();
       });
   },
@@ -209,77 +213,73 @@ module.exports = {
     const manager = new PluginManager({ discovery: { rootPath: './test' } });
     try {
       manager.require('mango');
-    }
-    catch (error) {
-      test.equal(error.message, 'The plugin "mango" did not return an object after loading.');
+    } catch (error) {
+      test.equal(
+        error.message,
+        'The plugin "mango" did not return an object after loading.',
+      );
     }
     test.done();
   },
   instantiateInexisting(test) {
     test.expect(1);
-    this.manager.instantiate('fail')
-      .catch((error) => {
-        test.equal(
-          error.message,
-          'Unable to find plugin with ID: "fail". Available plugins are: avocado, fruit, invalid_loader, mango, pear, ripeAvocado'
-        );
-        test.done();
-      });
+    this.manager.instantiate('fail').catch((error) => {
+      test.equal(
+        error.message,
+        'Unable to find plugin with ID: "fail". Available plugins are: avocado, fruit, invalid_loader, mango, pear, ripeAvocado',
+      );
+      test.done();
+    });
   },
   requireInexisting(test) {
     test.expect(1);
     const manager = new PluginManager({ discovery: { rootPath: './test' } });
     try {
       manager.require('fail');
-    }
-    catch (error) {
+    } catch (error) {
       test.equal(
         error.message,
-        'Unable to find plugin with ID: "fail". Available plugins are: avocado, fruit, invalid_loader, mango, pear, ripeAvocado'
+        'Unable to find plugin with ID: "fail". Available plugins are: avocado, fruit, invalid_loader, mango, pear, ripeAvocado',
       );
     }
     test.done();
   },
   instantiateNonLoader(test) {
     test.expect(1);
-    this.manager.instantiate('invalid_loader')
-      .catch((error) => {
-        test.equal(
-          error.message,
-          'Unable to find or execute the plugin loader for plugin "invalid_loader" (found InvalidLoader).'
-        );
-        test.done();
-      });
+    this.manager.instantiate('invalid_loader').catch((error) => {
+      test.equal(
+        error.message,
+        'Unable to find or execute the plugin loader for plugin "invalid_loader" (found InvalidLoader).',
+      );
+      test.done();
+    });
   },
   requireNonLoader(test) {
     test.expect(1);
     const manager = new PluginManager({ discovery: { rootPath: './test' } });
     try {
       manager.require('invalid_loader');
-    }
-    catch (error) {
+    } catch (error) {
       test.equal(
         error.message,
-        'Unable to find or execute the plugin loader for plugin "invalid_loader" (found InvalidLoader).'
+        'Unable to find or execute the plugin loader for plugin "invalid_loader" (found InvalidLoader).',
       );
     }
     test.done();
   },
   check(test) {
     test.expect(1);
-    this.manager.discover()
-      .then(() => {
-        test.doesNotThrow(() => this.manager.check('avocado'), 'Error');
-        test.done();
-      });
+    this.manager.discover().then(() => {
+      test.doesNotThrow(() => this.manager.check('avocado'), 'Error');
+      test.done();
+    });
   },
   checkMissing(test) {
     test.expect(1);
-    this.manager.discover()
-      .then(() => {
-        test.throws(() => this.manager.check('fail'), 'Error');
-        test.done();
-      });
+    this.manager.discover().then(() => {
+      test.throws(() => this.manager.check('fail'), 'Error');
+      test.done();
+    });
   },
   checkMissingDep(test) {
     test.expect(1);
@@ -306,7 +306,8 @@ module.exports = {
   },
   decorates(test) {
     test.expect(4);
-    this.manager.instantiate('ripeAvocado', { colorType: 'hex' })
+    this.manager
+      .instantiate('ripeAvocado', { colorType: 'hex' })
       .then((instance) => {
         test.equals(instance.descriptor.loader, '../avocado/customLoader.js');
         test.equals(instance.exports.color, '#33AA33');
