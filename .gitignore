@@ -5,3 +5,4 @@ scratch
 .tmp
 lib
 flow-typed
+/.idea
