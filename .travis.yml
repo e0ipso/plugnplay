@@ -31,4 +31,4 @@ jobs:
       stage: deploy
       if: branch = master
       # Semantic release will fail if it's not using node 8.
-      script: npm run semantic-release
+      script: npm run build && npm run semantic-release
