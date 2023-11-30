@@ -71,13 +71,13 @@
     "flatted": "^3.0.5",
     "flow-copy-source": "^2.0.9",
     "flow-remove-types": "^1.2.3",
-    "glob": "^7.1.2",
+    "glob": "^9.0.0",
     "js-yaml": "^3.14.0",
     "lodash": "^4.17.20",
     "marked": "^4.0.10",
     "md5": "^2.2.1",
     "pify": "^4.0.0",
     "require-subvert": "^0.1.0",
-    "rimraf": "^3.0.2"
+    "rimraf": "^4.0.0"
   }
 }
