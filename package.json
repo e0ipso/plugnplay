@@ -71,7 +71,7 @@
     "flatted": "^3.0.5",
     "flow-copy-source": "^2.0.9",
     "flow-remove-types": "^1.2.3",
-    "glob": "^7.1.2",
+    "glob": "^11.0.3",
     "js-yaml": "^3.14.0",
     "lodash": "^4.17.20",
     "marked": "^4.0.10",
